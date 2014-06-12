@@ -10,8 +10,10 @@ export TERM=xterm-256color
 ZSH_THEME="agnoster"
 
 # Example aliases
+ #alias vim="$HOME/local/bin/vim"
  alias zshconfig="mate ~/.zshrc"
  alias ohmyzsh="mate ~/.oh-my-zsh"
+ __git_files() { _files }
 
 # Uncomment the following line to use case-sensitive completion.
 # CASE_SENSITIVE="true"
@@ -56,7 +58,10 @@ source $ZSH/oh-my-zsh.sh
 
 # User configuration
 
-export PATH=$HOME/bin:/usr/local/bin:$PATH
+PATH=$PATH:$HOME/bin:/usr/local/bin
+PATH=$PATH:$HOME/local/bin
+export PATH
+alias sudo="sudo env PATH=$PATH"
 # export MANPATH="/usr/local/man:$MANPATH"
 
 # You may need to manually set your language environment
@@ -194,3 +199,15 @@ build_prompt() {
 }
 
 PROMPT='%{%f%b%k%}$(build_prompt) '
+
+
+## github上でmergeされたローカルブランチを一括削除する
+## http://qiita.com/yuya_presto/items/45dca5902107eb7f263a
+git-prune-branches () {
+    git fetch --prune origin && git branch --merged origin/master | grep -vE ' master$|^\*' | xargs git branch -d
+}
+
+git-prune-branches-dry-run() {
+    git fetch --dry-run --prune origin
+    git fetch origin && git branch --merged origin/master | grep -vE ' master$|^\*' | xargs echo git branch -d
+}

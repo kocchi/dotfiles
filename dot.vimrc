@@ -17,7 +17,6 @@ NeoBundle 'hotchpotch/perldoc-vim'
 NeoBundle 'thinca/vim-quickrun'
 NeoBundle 'Lokaltog/vim-powerline'
 NeoBundle 'scrooloose/nerdtree'
-NeoBundle 'scrooloose/syntastic'
 NeoBundle 'Shougo/unite.vim'
 NeoBundle 'Shougo/vimproc', {
             \ 'build' : {
@@ -32,6 +31,28 @@ NeoBundle 'Shougo/vimproc', {
 NeoBundle 'kana/vim-fakeclip.git'
 NeoBundle 'Shougo/neomru.vim'
 set clipboard+=unnamed
+
+" シンタックスチェック
+NeoBundle 'scrooloose/syntastic'
+let g:syntastic_enable_signs=1
+let g:syntastic_auto_loc_list=2
+
+"yank to remote
+let g:y2r_config = {
+            \   'tmp_file': '/tmp/exchange_file',
+            \   'key_file': expand('$HOME') . '/.exchange.key',
+            \   'host': 'localhost',
+            \   'port': 52224,
+            \}
+function Yank2Remote()
+    call writefile(split(@", '\n'), g:y2r_config.tmp_file, 'b')
+    let s:params = ['cat %s %s | nc -w1 %s %s']
+    for s:item in ['key_file', 'tmp_file', 'host', 'port']
+        let s:params += [shellescape(g:y2r_config[s:item])]
+    endfor
+    let s:ret = system(call(function('printf'), s:params))
+endfunction
+nnoremap <silent> <unique> <Leader>y :call Yank2Remote()<CR>
 
 "powerline
 NeoBundle 'itchyny/lightline.vim'
@@ -138,14 +159,15 @@ nmap <Leader>r <plug>(quickrun)
 set fileencodings=euc-jp,ucs-bom,iso-2022-jp-3,iso-2022-jp,eucjp-ms,euc-jisx0213,euc-jp,sjis,cp932,
 set fileencoding=euc-jp
 set encoding=utf-8
+set fenc=utf-8
 
 set number
 set laststatus=2
 set statusline=%f\ [%{&fenc==''?&enc:&fenc}][%{&ff}]%=%8l:%c%8P
 
 ""自動でappach再起動
-"autocmd BufWritePre * :! sudo apachectl restart
-"autocmd BufWritePre * :! perltidy
+autocmd BufWritePre * :! sudo apachectl restart
+autocmd BufWritePre * :! perltidy
 "autocmd BufWritePre * :! sudo -E /home/training/script/tool/compile_smart
 
 
