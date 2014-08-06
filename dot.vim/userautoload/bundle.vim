@@ -142,9 +142,7 @@ vnoremap /g y:Unite grep::-iHRn:<C-R>=escape(@", '\\.*$^[]')<CR><CR>
 " }}}
 
 
-" switch.vim
-" http://www.vimninjas.com/2012/09/12/switch/
-NeoBundle 'AndrewRadev/switch.vim'
+NeoBundle 'tpope/vim-endwise'
 
 NeoBundleCheck
 
