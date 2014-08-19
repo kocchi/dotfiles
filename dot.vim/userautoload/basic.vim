@@ -7,13 +7,13 @@ set number
 set laststatus=2
 set statusline=%f\ [%{&fenc==''?&enc:&fenc}][%{&ff}]%=%8l:%c%8P
 
-"¥¹¥Ú¥ë¥Á¥§¥Ã¥¯
+"ã‚¹ãƒšãƒ«ãƒã‚§ãƒƒã‚¯
 "set spell
 
-"¥«¡¼¥½¥ë¹Ô¤ò¥Ï¥¤¥é¥¤¥È
+"ã‚«ãƒ¼ã‚½ãƒ«è¡Œã‚’ãƒã‚¤ãƒ©ã‚¤ãƒˆ
 set cursorline
 set cursorcolumn
-" ¥«¥ì¥ó¥È¥¦¥£¥ó¥É¥¦¤Ë¤Î¤ß·ÓÀş¤ò°ú¤¯
+" ã‚«ãƒ¬ãƒ³ãƒˆã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã«ã®ã¿ç½«ç·šã‚’å¼•ã
 augroup cch
     autocmd! cch
     autocmd WinLeave * set nocursorline
@@ -26,38 +26,37 @@ augroup cch
     autocmd WinEnter,BufRead * set cursorcolumn
 augroup END
 
-"" ÁŞÆş¥â¡¼¥ÉÃæ¤Ë'Ctr-*'¤Ç¥³¥Ş¥ó¥É¥â¡¼¥É¤Ç¤Î°ÜÆ°¡¦ºï½ü¤ò²ÄÇ½¤Ë¤¹¤ë
+"" æŒ¿å…¥ãƒ¢ãƒ¼ãƒ‰ä¸­ã«'Ctr-*'ã§ã‚³ãƒãƒ³ãƒ‰ãƒ¢ãƒ¼ãƒ‰ã§ã®ç§»å‹•ãƒ»å‰Šé™¤ã‚’å¯èƒ½ã«ã™ã‚‹
 inoremap <c-d> <delete>
 inoremap <c-j> <down>
 inoremap <c-k> <up>
 inoremap <c-h> <left>
 inoremap <c-l> <right>
 
-"¥Æ¥ó¥×¥ì¡¼¥È¤ÎÀßÄê================================
+"ãƒ†ãƒ³ãƒ—ãƒ¬ãƒ¼ãƒˆã®è¨­å®š================================
 autocmd BufNewFile *.pl 0r $HOME/.vim/template/perl-script.txt
 autocmd BufNewFile *.t  0r $HOME/.vim/template/perl-test.txt
 "===================================================
 
-"set title "ÊÔ½¸Ãæ¤Î¥Õ¥¡¥¤¥ëÌ¾¤òÉ½¼¨¤¹¤ë
-set showcmd "ÆşÎÏÃæ¤Î¥³¥Ş¥ó¥É¤òÉ½¼¨¤¹¤ë
-set ruler "ºÂÉ¸¤òÉ½¼¨¤¹¤ë
-set showmatch   "ÊÄ¤¸³ç¸Ì¤ÎÆşÎÏ»ş¤ËÂĞ±ş¤¹¤ë³ç¸Ì¤òÉ½¼¨¤¹¤ë
-set matchtime=3 "showmatch¤ÎÉ½¼¨»ş´Ö
-set laststatus=2 "¥¹¥Æ¡¼¥¿¥¹¥é¥¤¥ó¤ò¾ï¤ËÉ½¼¨¤¹¤ë
+"set title "ç·¨é›†ä¸­ã®ãƒ•ã‚¡ã‚¤ãƒ«åã‚’è¡¨ç¤ºã™ã‚‹
+set showcmd "å…¥åŠ›ä¸­ã®ã‚³ãƒãƒ³ãƒ‰ã‚’è¡¨ç¤ºã™ã‚‹
+set ruler "åº§æ¨™ã‚’è¡¨ç¤ºã™ã‚‹
+set showmatch   "é–‰ã˜æ‹¬å¼§ã®å…¥åŠ›æ™‚ã«å¯¾å¿œã™ã‚‹æ‹¬å¼§ã‚’è¡¨ç¤ºã™ã‚‹
+set matchtime=3 "showmatchã®è¡¨ç¤ºæ™‚é–“
+set laststatus=2 "ã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹ãƒ©ã‚¤ãƒ³ã‚’å¸¸ã«è¡¨ç¤ºã™ã‚‹
 
-set shiftwidth=4    "¹ÔÆ¬¤Ç¤Î<Tab>¤ÎÉı
-set tabstop=4   "¹ÔÆ¬°Ê³°¤Ç¤Î<Tab>¤ÎÉı
+set shiftwidth=4    "è¡Œé ­ã§ã®<Tab>ã®å¹…
+set tabstop=4   "è¡Œé ­ä»¥å¤–ã§ã®<Tab>ã®å¹…
 autocmd FileType ruby set tabstop=2
 autocmd FileType ruby set shiftwidth=2
 
 set autoindent
 set expandtab
 set list
-set listchars=tab:>-,extends:<,trail:-
-
-"Á´³Ñ¥¹¥Ú¡¼¥¹¤ò»ë³Ğ²½
+set listchars=nbsp:%,trail:-,tab:Â»\ 
+"å…¨è§’ã‚¹ãƒšãƒ¼ã‚¹ã‚’è¦–è¦šåŒ–
 highlight ZenkakuSpace cterm=underline ctermfg=lightblue guibg=#ffffff
-au BufNewFile,BufRead * match ZenkakuSpace /¡¡/
+au BufNewFile,BufRead * match ZenkakuSpace /ã€€/
 
-" ¥Ó¡¼¥×²» ¥Ó¥¸¥å¥¢¥ë¥Ù¥ë¤ò»ÈÍÑ¤·¤Ê¤¤
+" ãƒ“ãƒ¼ãƒ—éŸ³ ãƒ“ã‚¸ãƒ¥ã‚¢ãƒ«ãƒ™ãƒ«ã‚’ä½¿ç”¨ã—ãªã„
 set vb t_vb=

@@ -22,27 +22,27 @@ let g:solarized_contrast = "high"
 colorscheme solarized
 set t_Co=256
 
+"===================================================================
+" vim-indent-guides
+"===================================================================
 " インデントにガイドラインをつける
 NeoBundle 'nathanaelkane/vim-indent-guides'
-" vim-indent-guides
-" Vim 起動時 vim-indent-guides を自動起動
 let g:indent_guides_enable_on_vim_startup=1
-" ガイドをスタートするインデントの量
-let g:indent_guides_start_level=2
-" 自動カラー無効
-let g:indent_guides_auto_colors=0
+" 1インデント目からガイドする
+let g:indent_guides_start_level = 1
+" 自動カラーを無効にして手動で設定する
+let g:indent_guides_auto_colors = 0
+" 奇数インデントのガイドカラー
+hi IndentGuidesOdd  ctermbg=green
+" 偶数インデントのガイドカラー
+hi IndentGuidesEven ctermbg=black
+" ハイライト色の変化の幅 (Terminal では未サポート)
+"let g:indent_guides_color_change_percent = 20
 " ガイドの幅
 let g:indent_guides_guide_size = 1
-autocmd VimEnter,Colorscheme * :hi IndentGuidesOdd  guibg=#444433 ctermbg=black
-autocmd VimEnter,Colorscheme * :hi IndentGuidesEven  guibg=#444433 ctermbg=black
-".tと.psgiのシンタックスハイライト
-hi clear CursorLine
-hi CursorLine gui=underline
-highlight CursorLine ctermbg=black guibg=black
-
-hi clear Cursorcolumn
-hi Cursorcolumn gui=underline
-highlight CursorColumn ctermbg=black guibg=black
+" ガイド幅をインデント幅に合わせる
+"let g:indent_guides_guide_size = &tabstop
+"===================================================================
 
 " ターミナルタイプによるカラー設定
 if &term =~ "xterm-256color" || "screen-256color"
