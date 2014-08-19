@@ -61,6 +61,3 @@ au BufNewFile,BufRead * match ZenkakuSpace /　/
 
 " ビープ音 ビジュアルベルを使用しない
 set vb t_vb=
-
-" すべてのモードでマウスが有効
-set mouse=a

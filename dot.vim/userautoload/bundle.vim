@@ -90,6 +90,7 @@ let g:gitgutter_sign_removed = '✘'
 "----------------------------------------------------
 "" unite.vim
 "----------------------------------------------------
+NeoBundle 'Shougo/vimfiler'
 NeoBundle 'Shougo/unite.vim'
 ""  {{{
 " The prefix key.
@@ -140,7 +141,12 @@ nnoremap <silent> ,r  :<C-u>UniteResume search-buffer<CR>
 " https://github.com/shingokatsushima/dotfiles/blob/master/.vimrc
 vnoremap /g y:Unite grep::-iHRn:<C-R>=escape(@", '\\.*$^[]')<CR><CR>
 " }}}
-
+" unite grep に ag(The Silver Searcher) を使う
+if executable('ag')
+  let g:unite_source_grep_command = 'ag'
+  let g:unite_source_grep_default_opts = '--nogroup --nocolor --column'
+  let g:unite_source_grep_recursive_opt = ''
+endif
 
 NeoBundle 'tpope/vim-endwise'
 
