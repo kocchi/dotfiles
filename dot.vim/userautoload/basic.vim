@@ -7,25 +7,6 @@ set number
 set laststatus=2
 set statusline=%f\ [%{&fenc==''?&enc:&fenc}][%{&ff}]%=%8l:%c%8P
 
-"スペルチェック
-"set spell
-
-"カーソル行をハイライト
-set cursorline
-set cursorcolumn
-" カレントウィンドウにのみ罫線を引く
-augroup cch
-    autocmd! cch
-    autocmd WinLeave * set nocursorline
-    autocmd WinEnter,BufRead * set cursorline
-augroup END
-
-augroup cch
-    autocmd! cch
-    autocmd WinLeave * set nocursorcolumn
-    autocmd WinEnter,BufRead * set cursorcolumn
-augroup END
-
 "" 挿入モード中に'Ctr-*'でコマンドモードでの移動・削除を可能にする
 inoremap <c-d> <delete>
 inoremap <c-j> <down>

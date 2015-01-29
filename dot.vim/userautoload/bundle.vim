@@ -1,4 +1,4 @@
-" originalrepos on github
+"dot.vim/userautoload/bundle.vim originalrepos on github
 
 "=============================================
 " neosnippet
@@ -33,10 +33,6 @@ let g:neocomplcache_keyword_patterns['default'] = '\h\w*'
 let g:neocomplcache_snippets_dir = "~/.vim/snippets"
 imap <expr><C-k> neocomplcache#sources#snippets_complete#expandable() ? "\<Plug>(neocomplcache_snippets_expand)" : "\<C-n>"
 smap <C-k> <Plug>(neocomplcache_snippets_expand)
-
-
-NeoBundle 'petdance/vim-perl'
-NeoBundle 'hotchpotch/perldoc-vim'
 
 NeoBundle 'thinca/vim-quickrun'
 nmap <Leader>r <plug>(quickrun)
@@ -75,6 +71,7 @@ NeoBundle 'tpope/vim-fugitive'       " ブランチを表示
 NeoBundle 'sudo.vim'                 " :w sudo:%とすると管理者権限で保存
 NeoBundle 'ZenCoding.vim'            " HTML入力効率化
 NeoBundle 'rails.vim'                " rails用の便利機能追加
+NeoBundle 'AndrewRadev/switch.vim'
 NeoBundle 'altercation/vim-colors-solarized'
 NeoBundle 'chriskempson/vim-tomorrow-theme'
 

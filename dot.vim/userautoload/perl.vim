@@ -5,3 +5,6 @@ map <F4>  :w !perl<CR>
 map <F5>  :!perl %<CR>
 autocmd BufNewFile,BufRead *.psgi   set filetype=perl
 autocmd BufNewFile,BufRead *.t      set filetype=perl
+
+NeoBundle 'petdance/vim-perl'
+NeoBundle 'hotchpotch/perldoc-vim'

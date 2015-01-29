@@ -59,6 +59,9 @@ source $ZSH/oh-my-zsh.sh
 
 # User configuration
 
+source $HOME/.perlbrew/etc/bashrc
+if which plenv > /dev/null; then eval "$(plenv init -)"; fi
+
 PATH=$PATH:$HOME/bin:/usr/local/bin
 PATH=$PATH:$HOME/local/bin
 export PATH
