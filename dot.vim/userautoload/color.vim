@@ -5,8 +5,6 @@
 syntax enable
 "NeoBundle 'altercation/vim-colors-solarized'
 "NeoBundle 'chriskempson/vim-tomorrow-theme'
-"ÇØ·Ê¿§¤ò dark ¤Ë¤¹¤ë
-set background=dark
 "if ($ft=='ruby')
 "    colorscheme Tomorrow-Night
 "else
@@ -18,9 +16,12 @@ set background=dark
 let g:solarized_visibility = "high"
 " ¥³¥ó¥È¥é¥¹¥È¤ò¹â¤¯¤¹¤ë
 let g:solarized_contrast = "high"
+set t_Co=256
 " ¥«¥é¡¼¥¹¥­¡¼¥Þ¤ò Solarized ¤Ë¤¹¤ë
 colorscheme solarized
-set t_Co=256
+"ÇØ·Ê¿§¤ò dark ¤Ë¤¹¤ë
+set background=dark
+let g:solarized_termtrans=1
 
 "===================================================================
 " vim-indent-guides
@@ -32,8 +33,8 @@ let g:indent_guides_enable_on_vim_startup=1
 let g:indent_guides_start_level = 1
 " ¼«Æ°¥«¥é¡¼¤òÌµ¸ú¤Ë¤·¤Æ¼êÆ°¤ÇÀßÄê¤¹¤ë
 let g:indent_guides_auto_colors = 0
-autocmd VimEnter,Colorscheme * :hi IndentGuidesOdd  ctermbg=black
-autocmd VimEnter,Colorscheme * :hi IndentGuidesEven ctermbg=green
+" autocmd VimEnter,Colorscheme * :hi IndentGuidesOdd  ctermbg=black
+" autocmd VimEnter,Colorscheme * :hi IndentGuidesEven ctermbg=green
 " ¥Ï¥¤¥é¥¤¥È¿§¤ÎÊÑ²½¤ÎÉý (Terminal ¤Ç¤ÏÌ¤¥µ¥Ý¡¼¥È)
 "let g:indent_guides_color_change_percent = 20
 " ¥¬¥¤¥É¤ÎÉý
@@ -52,20 +53,20 @@ hi clear CursorLine
 "highlight CursorColumn cterm=italic ctermfg=NONE ctermbg=NONE
 
 " ¥¿¡¼¥ß¥Ê¥ë¥¿¥¤¥×¤Ë¤è¤ë¥«¥é¡¼ÀßÄê
-if &term =~ "xterm-256color" || "screen-256color"
-  " 256¿§
-  set t_Co=256
-  set t_Sf=[3%dm
-  set t_Sb=[4%dm
-elseif &term =~ "xterm-debian" || &term =~ "xterm-xfree86"
-  set t_Co=16
-  set t_Sf=[3%dm
-  set t_Sb=[4%dm
-elseif &term =~ "xterm-color"
-  set t_Co=8
-  set t_Sf=[3%dm
-  set t_Sb=[4%dm
-endif
+" if &term =~ "xterm-256color" || "screen-256color"
+"   " 256¿§
+"   set t_Co=256
+"   set t_Sf=[3%dm
+"   set t_Sb=[4%dm
+" elseif &term =~ "xterm-debian" || &term =~ "xterm-xfree86"
+"   set t_Co=16
+"   set t_Sf=[3%dm
+"   set t_Sb=[4%dm
+" elseif &term =~ "xterm-color"
+"   set t_Co=8
+"   set t_Sf=[3%dm
+"   set t_Sb=[4%dm
+" endif
 
 " Êä´°¸õÊä¤Î¿§¤Å¤± for vim7
 " hi Pmenu ctermbg=255 ctermfg=0 guifg=#000000 guibg=#999999

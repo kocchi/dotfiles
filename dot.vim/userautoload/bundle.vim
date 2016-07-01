@@ -146,6 +146,14 @@ if executable('ag')
 endif
 
 NeoBundle 'tpope/vim-endwise'
+NeoBundle 'elzr/vim-json'
+
+" pluntumlのシンタクスハイライトと:makeコマンド
+NeoBundle "aklt/plantuml-syntax"
+" plantumlスクリプトの設定
+let g:plantuml_executable_script="~/.vim/plantuml"
+
+" 引用符とか括弧とかつけてくれるやつ
+NeoBundle 'tpope/vim-surround'
 
 NeoBundleCheck
-

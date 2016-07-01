@@ -1,6 +1,6 @@
 set nocompatible               " be iMproved
-set fileencodings=euc-jp,ucs-bom,iso-2022-jp-3,iso-2022-jp,eucjp-ms,euc-jisx0213,euc-jp,utf-8,sjis,cp932,
-set fileencoding=euc-jp
+set fileencodings=utf-8,euc-jp,ucs-bom,iso-2022-jp-3,iso-2022-jp,eucjp-ms,euc-jisx0213,euc-jp,sjis,cp932,
+set fileencoding=utf-8
 set encoding=utf-8
 
 set number
@@ -28,8 +28,6 @@ set laststatus=2 "ステータスラインを常に表示する
 
 set shiftwidth=4    "行頭での<Tab>の幅
 set tabstop=4   "行頭以外での<Tab>の幅
-autocmd FileType ruby set tabstop=2
-autocmd FileType ruby set shiftwidth=2
 
 set autoindent
 set expandtab

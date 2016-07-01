@@ -1,0 +1,3 @@
+#!/bin/bash
+java -jar $HOME/local/bin/plantuml.jar -tpng $@
+open ${@%%.*}.png

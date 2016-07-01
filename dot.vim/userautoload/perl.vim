@@ -8,3 +8,4 @@ autocmd BufNewFile,BufRead *.t      set filetype=perl
 
 NeoBundle 'petdance/vim-perl'
 NeoBundle 'hotchpotch/perldoc-vim'
+NeoBundle 'motemen/xslate-vim'
