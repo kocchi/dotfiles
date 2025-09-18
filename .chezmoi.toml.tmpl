@@ -1,0 +1,13 @@
+# chezmoi設定ファイル
+
+[data]
+    # OS情報
+    os = "{{ .chezmoi.os }}"
+    arch = "{{ .chezmoi.arch }}"
+    
+    # Homebrewのパス（アーキテクチャに応じて自動設定）
+{{- if eq .chezmoi.arch "arm64" }}
+    homebrew_prefix = "/opt/homebrew"
+{{- else }}
+    homebrew_prefix = "/usr/local"
+{{- end }}
