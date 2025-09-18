@@ -25,8 +25,8 @@ update_brewfile() {
     
     cd "$DOTFILES_DIR"
     
-    # 現在インストールされているパッケージからBrewfileを生成
-    brew bundle dump --force --file="$BREWFILE"
+    # 現在インストールされているパッケージからBrewfileを生成（brew/caskのみ）
+    brew bundle dump --force --file="$BREWFILE" --no-vscode
     
     # gitで変更があるかチェック
     if git diff --quiet "$BREWFILE"; then
