@@ -45,6 +45,19 @@ cd ~/.local/share/chezmoi
 ./setup.sh
 ```
 
+### Homebrew自動同期
+
+新しいツールをインストールしたときに自動でdotfilesに反映されます：
+
+```bash
+# 通常のbrew installの代わりに
+brewi lazygit          # install + Brewfile更新 + コミット確認
+brewu unnecessary-tool # uninstall + Brewfile更新
+brewup                 # upgrade + Brewfile更新
+brewsync               # 手動でBrewfile同期
+brewbundle             # Brewfileから復元
+```
+
 ### 手動インストール
 
 #### 1. 必要なツールのインストール

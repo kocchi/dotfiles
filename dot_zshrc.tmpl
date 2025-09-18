@@ -160,6 +160,15 @@ alias vim='nvim'
 alias vi='nvim'
 alias zshconfig='nvim ~/.zshrc'
 
+# Homebrew自動同期エイリアス
+if [[ -x "$HOME/.local/share/chezmoi/brew-auto-sync.sh" ]]; then
+    alias brewi='$HOME/.local/share/chezmoi/brew-auto-sync.sh install'    # brew install + 自動同期
+    alias brewu='$HOME/.local/share/chezmoi/brew-auto-sync.sh uninstall'  # brew uninstall + 自動同期
+    alias brewup='$HOME/.local/share/chezmoi/brew-auto-sync.sh upgrade'   # brew upgrade + 自動同期
+    alias brewsync='$HOME/.local/share/chezmoi/brew-auto-sync.sh sync'    # Brewfile手動同期
+    alias brewbundle='$HOME/.local/share/chezmoi/brew-auto-sync.sh bundle' # Brewfileから復元
+fi
+
 # カスタム関数
 
 # ghqとfzfを使ったリポジトリ移動

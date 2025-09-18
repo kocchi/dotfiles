@@ -67,96 +67,29 @@ install_homebrew() {
     log_success "Homebrewの準備が完了しました"
 }
 
-# 基本的なCLIツールのインストール
+# Brewfileを使ったCLIツールのインストール
 install_cli_tools() {
-    log_info "CLIツールをインストールしています..."
+    log_info "Brewfileを使ってCLIツールをインストールしています..."
     
-    # システム版で十分なツール（既存の場合はスキップ）
-    local system_tools=(
-        "curl"
-        "wget"
-    )
+    local brewfile="$HOME/.local/share/chezmoi/Brewfile"
     
-    # 開発に重要なツール（Homebrew版を推奨）
-    local dev_tools=(
-        "git"          # システム版は古い場合が多い
-        "tree"         # システム版は機能限定
-    )
-    
-    # Homebrew専用ツール（システムにはない）
-    local homebrew_tools=(
-        # 新しいUNIXツールの代替
-        "ripgrep"      # grep代替
-        "fd"           # find代替
-        "bat"          # cat代替
-        "eza"          # ls代替（ezaはexaの後継）
-        "procs"        # ps代替
-        "dust"         # du代替
-        "bottom"       # top代替
-        "zoxide"       # cd代替
+    if [[ ! -f "$brewfile" ]]; then
+        log_warning "Brewfileが見つかりません: $brewfile"
+        log_info "基本的なツールのみインストールします..."
         
-        # ファジーファインダー
-        "fzf"
-        
-        # 開発ツール
-        "gh"           # GitHub CLI
-        "neovim"
-        "tmux"
-        "ghq"          # リポジトリ管理
-        "chezmoi"      # dotfiles管理
-        "delta"        # git diff改善
-        "htop"
-        "jq"           # JSON処理
-        "yq"           # YAML処理
-        
-        # zsh拡張
-        "zsh-autosuggestions"
-        "zsh-syntax-highlighting"
-        "zsh-completions"
-        
-        # プロンプト
-        "starship"
-        
-        # その他便利ツール
-        "httpie"       # curl代替
-        "tldr"         # man代替
-        "trash"        # rm代替
-    )
-    
-    # システム版で十分なツールのチェック
-    for tool in "${system_tools[@]}"; do
-        if command_exists "$tool"; then
-            log_info "$tool はシステム版を使用します（スキップ）"
-        elif brew list "$tool" >/dev/null 2>&1; then
-            log_info "$tool は既にHomebrew版がインストールされています"
-        else
-            log_info "$tool をインストールしています..."
-            brew install "$tool"
-        fi
-    done
-    
-    # 開発ツール（Homebrew版推奨）
-    for tool in "${dev_tools[@]}"; do
-        if brew list "$tool" >/dev/null 2>&1; then
-            log_info "$tool は既にHomebrew版がインストールされています"
-        elif command_exists "$tool"; then
-            log_warning "$tool はシステム版が見つかりました。Homebrew版に更新します"
-            brew install "$tool"
-        else
-            log_info "$tool をインストールしています..."
-            brew install "$tool"
-        fi
-    done
-    
-    # Homebrew専用ツール
-    for tool in "${homebrew_tools[@]}"; do
-        if brew list "$tool" >/dev/null 2>&1; then
-            log_info "$tool は既にインストールされています"
-        else
-            log_info "$tool をインストールしています..."
-            brew install "$tool"
-        fi
-    done
+        # Brewfileが無い場合の最小限インストール
+        local essential_tools=("git" "neovim" "tmux" "fzf" "ripgrep" "chezmoi")
+        for tool in "${essential_tools[@]}"; do
+            if ! brew list "$tool" >/dev/null 2>&1; then
+                log_info "$tool をインストールしています..."
+                brew install "$tool"
+            fi
+        done
+    else
+        log_info "Brewfileからパッケージをインストールしています..."
+        cd "$(dirname "$brewfile")"
+        brew bundle install --file="$brewfile"
+    fi
     
     log_success "CLIツールのインストールが完了しました"
 }
