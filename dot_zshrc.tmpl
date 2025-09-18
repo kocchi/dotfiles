@@ -9,7 +9,7 @@ export XDG_CACHE_HOME="$HOME/.cache"
 export EDITOR="nvim"
 export VISUAL="nvim"
 export PAGER="less"
-export TERM="xterm-256color"
+export TERM="${TERM:-xterm-256color}"  # tmux内では自動的にtmux-256colorになる
 export LANG="ja_JP.UTF-8"
 
 # パスの設定（優先順位順）
@@ -17,8 +17,7 @@ path=(
     "$HOME/.local/bin"
     "$HOME/.cargo/bin"      # Rust
     "$HOME/.asdf/shims"     # asdf
-    "/opt/homebrew/bin"     # Apple Silicon Homebrew
-    "/usr/local/bin"        # Intel Homebrew
+    "{{ .homebrew_prefix }}/bin" # Homebrew（アーキテクチャ別）
     "/usr/bin"
     "/bin"
     "/usr/sbin"

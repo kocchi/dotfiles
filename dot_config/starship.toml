@@ -67,6 +67,6 @@ format = " [$symbol $version]($style)"
 style = "red"
 
 [cmd_duration]
-min_time = 10_000
+min_time = 5_000
 format = " took [$duration](yellow)"
 show_milliseconds = false

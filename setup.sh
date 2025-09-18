@@ -205,7 +205,7 @@ setup_tmux_tpm() {
     log_info "tmux起動後に 'prefix + I' でプラグインをインストールしてください"
 }
 
-# Starshipの設定
+# Starshipの設定チェック
 setup_starship() {
     local config_dir="$HOME/.config"
     local starship_config="$config_dir/starship.toml"
@@ -215,72 +215,11 @@ setup_starship() {
     if [[ -f "$starship_config" ]]; then
         log_info "Starshipの設定ファイルは既に存在します"
     else
-        log_info "Starshipの設定ファイルを作成しています..."
-        cat > "$starship_config" << 'EOF'
-# Starshipプロンプト設定
-
-format = """
-$username\
-$hostname\
-$directory\
-$git_branch\
-$git_status\
-$nodejs\
-$python\
-$rust\
-$golang\
-$ruby\
-$cmd_duration\
-$line_break\
-$character"""
-
-[directory]
-style = "blue bold"
-read_only = " 🔒"
-truncation_length = 4
-truncate_to_repo = false
-
-[character]
-success_symbol = "[❯](purple)"
-error_symbol = "[❯](red)"
-vimcmd_symbol = "[❮](green)"
-
-[git_branch]
-symbol = "🌱 "
-format = "[$symbol$branch]($style) "
-style = "bright-green"
-
-[git_status]
-format = '([\[$all_status$ahead_behind\]]($style) )'
-style = "cyan"
-
-[nodejs]
-symbol = " "
-style = "bright-green"
-
-[python]
-symbol = " "
-style = "bright-blue"
-
-[rust]
-symbol = " "
-style = "bright-red"
-
-[golang]
-symbol = " "
-style = "bright-cyan"
-
-[ruby]
-symbol = " "
-style = "bright-red"
-
-[cmd_duration]
-min_time = 2_000
-format = "took [$duration](bold yellow)"
-EOF
+        log_warning "Starshipの設定ファイルが見つかりません"
+        log_info "chezmoiでdotfilesを適用すると設定ファイルが作成されます"
     fi
     
-    log_success "Starshipの設定が完了しました"
+    log_success "Starshipの設定確認が完了しました"
 }
 
 # chezmoiのインストールと設定適用
