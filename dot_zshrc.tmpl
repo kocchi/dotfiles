@@ -49,10 +49,6 @@ if [[ -f "{{ .homebrew_prefix }}/share/zsh-autosuggestions/zsh-autosuggestions.z
     ZSH_AUTOSUGGEST_MANUAL_REBIND=1
     ZSH_AUTOSUGGEST_ACCEPT_WIDGETS=(end-of-line vi-end-of-line vi-add-eol)
     
-    # キーバインド
-    bindkey '^ ' autosuggest-accept      # Ctrl+Space で補完を受け入れ
-    bindkey '^[[C' autosuggest-accept    # 右矢印で補完を受け入れ
-    bindkey '^F' autosuggest-accept      # Ctrl+F で全体受け入れ
 fi
 
 # zsh-syntax-highlighting（Homebrewでインストール）
@@ -235,6 +231,13 @@ if [[ -f "{{ .homebrew_prefix }}/share/zsh-history-substring-search/zsh-history-
     bindkey '^[[B' history-substring-search-down   # 下矢印
     bindkey '^P' history-substring-search-up       # Ctrl+P
     bindkey '^N' history-substring-search-down     # Ctrl+N
+fi
+
+# キーバインド（最後に設定して他の設定による上書きを防ぐ）
+if command -v _zsh_autosuggest_bind_widgets >/dev/null 2>&1; then
+    bindkey '^ ' autosuggest-accept      # Ctrl+Space で補完を受け入れ
+    bindkey '^[[C' autosuggest-accept    # 右矢印で補完を受け入れ
+    bindkey '^F' autosuggest-accept      # Ctrl+F で全体受け入れ
 fi
 
 # ローカル設定ファイル（存在する場合のみ）
