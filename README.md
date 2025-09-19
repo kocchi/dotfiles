@@ -32,7 +32,7 @@
 brew install chezmoi
 
 # リポジトリを初期化
-chezmoi init https://github.com/yourusername/dotfiles
+chezmoi init https://github.com/kocchi/dotfiles
 
 # 設定を確認（ドライラン）
 chezmoi diff
@@ -212,11 +212,60 @@ chezmoi git push
 - `Ctrl-b h/j/k/l` : ペイン移動
 - `Ctrl-b r` : 設定リロード
 
-### zsh
+### zsh (fishライク機能)
 
 - `Ctrl-r` : 履歴検索 (fzf)
 - `Ctrl-]` : ghqリポジトリ検索
 - `..` / `...` / `....` : ディレクトリ移動
+- `↑/↓` : 入力中の文字で履歴検索（例：`curl`と入力後↑で過去のcurlコマンドを遡る）
+- `Ctrl-Space` : 自動補完を受け入れ
+- `→` : 自動補完を1文字ずつ受け入れ
+- `z <dir>` : zoxideによるスマートcd
+
+#### tmux統合管理コマンド `t`
+**覚えやすい1文字コマンド！**
+
+- `t` : メニュー表示（迷った時はこれ！）
+- `t <name>` : セッション名で直接アタッチ/作成
+- `t l` : セッション一覧表示
+- `t a` : セッション選択アタッチ/切り替え (fzf)
+- `t n <name>` : 新しいセッション作成
+- `t s` : セッション切り替え (tmux内専用, fzf)
+- `t k` : セッション選択削除 (fzf)
+
+**使用例:**
+```bash
+t work          # workセッションにアタッチ（なければ作成）
+t               # メニューを表示
+t a             # fzfでセッション選択
+t l             # セッション一覧
+```
+
+#### Git関連（oh-my-zsh風 + fzf強化）
+
+**基本エイリアス:**
+- `g` : git
+- `ga` / `gaa` : git add / git add --all
+- `gc` / `gcm` : git commit / git commit -m
+- `gco` / `gcb` : git checkout / git checkout -b
+- `gd` / `gds` : git diff / git diff --staged
+- `gs` / `gss` : git status / git status -s
+- `gp` / `gpl` : git push / git pull
+
+**oh-my-zsh風関数:**
+- `ggpush` : 現在のブランチをpush
+- `ggpull` : 現在のブランチをpull
+- `ggpnp` : pull → push
+- `ggsup` : upstream設定
+- `gwip` / `gunwip` : WIP commit作成/取消
+
+**fzf強化関数:**
+- `gco-fzf` : ブランチ選択checkout
+- `gbd-fzf` : ブランチ選択削除
+- `gshow-fzf` : コミット選択表示
+
+**ヘルプ:**
+- `ghelp` / `git-help` : Git関連コマンド一覧表示
 
 ## 🆘 トラブルシューティング
 
@@ -260,9 +309,17 @@ chezmoi git push
 ├── dot_config/              # ~/.config/
 │   ├── nvim/
 │   │   └── init.lua         # Neovim設定
-│   └── starship.toml        # Starshipプロンプト設定
+│   ├── starship.toml        # Starshipプロンプト設定
+│   └── zsh/                 # zsh設定モジュール
+│       ├── aliases.zsh      # エイリアス定義
+│       ├── completions.zsh  # 補完設定
+│       ├── functions.zsh    # カスタム関数
+│       ├── git.zsh          # Git関連関数
+│       └── tmux.zsh         # tmux関連関数
 ├── dot_tmux.conf            # ~/.tmux.conf
 ├── dot_zshrc.tmpl           # ~/.zshrc（テンプレート）
+├── Brewfile                 # Homebrew依存関係
+├── brew-auto-sync.sh        # Homebrew自動同期
 ├── README.md                # このファイル
 └── setup.sh                 # セットアップスクリプト
 ```

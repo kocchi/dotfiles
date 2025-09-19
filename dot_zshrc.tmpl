@@ -1,5 +1,3 @@
-# zsh設定 (2025年版)
-
 # XDG Base Directory Specification
 export XDG_CONFIG_HOME="$HOME/.config"
 export XDG_DATA_HOME="$HOME/.local/share"
@@ -42,11 +40,67 @@ fi
 # zsh-autosuggestions（Homebrewでインストール）
 if [[ -f "{{ .homebrew_prefix }}/share/zsh-autosuggestions/zsh-autosuggestions.zsh" ]]; then
     source "{{ .homebrew_prefix }}/share/zsh-autosuggestions/zsh-autosuggestions.zsh"
+    
+    # 自動補完設定
+    ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="fg=#666666,bold"
+    ZSH_AUTOSUGGEST_STRATEGY=(history completion)
+    ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE=20
+    ZSH_AUTOSUGGEST_USE_ASYNC=1
+    ZSH_AUTOSUGGEST_MANUAL_REBIND=1
+    
+    # キーバインド
+    bindkey '^ ' autosuggest-accept      # Ctrl+Space で補完を受け入れ
+    bindkey '^[[C' forward-char          # 右矢印で1文字受け入れ
+    bindkey '^F' autosuggest-accept      # Ctrl+F で全体受け入れ
 fi
 
 # zsh-syntax-highlighting（Homebrewでインストール）
 if [[ -f "{{ .homebrew_prefix }}/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" ]]; then
+    # シンタックスハイライト設定
+    ZSH_HIGHLIGHT_HIGHLIGHTERS=(main brackets pattern cursor)
+    
+    # 色設定
+    typeset -A ZSH_HIGHLIGHT_STYLES
+    ZSH_HIGHLIGHT_STYLES[default]=none
+    ZSH_HIGHLIGHT_STYLES[unknown-token]=fg=red,bold
+    ZSH_HIGHLIGHT_STYLES[reserved-word]=fg=yellow,bold
+    ZSH_HIGHLIGHT_STYLES[alias]=fg=green,bold
+    ZSH_HIGHLIGHT_STYLES[suffix-alias]=fg=green,bold
+    ZSH_HIGHLIGHT_STYLES[builtin]=fg=green,bold
+    ZSH_HIGHLIGHT_STYLES[function]=fg=green,bold
+    ZSH_HIGHLIGHT_STYLES[command]=fg=green,bold
+    ZSH_HIGHLIGHT_STYLES[precommand]=fg=green,underline
+    ZSH_HIGHLIGHT_STYLES[commandseparator]=none
+    ZSH_HIGHLIGHT_STYLES[hashed-command]=fg=green,bold
+    ZSH_HIGHLIGHT_STYLES[path]=fg=blue,underline
+    ZSH_HIGHLIGHT_STYLES[path_pathseparator]=
+    ZSH_HIGHLIGHT_STYLES[path_prefix_pathseparator]=
+    ZSH_HIGHLIGHT_STYLES[globbing]=fg=blue,bold
+    ZSH_HIGHLIGHT_STYLES[history-expansion]=fg=blue,bold
+    ZSH_HIGHLIGHT_STYLES[single-hyphen-option]=fg=cyan
+    ZSH_HIGHLIGHT_STYLES[double-hyphen-option]=fg=cyan
+    ZSH_HIGHLIGHT_STYLES[back-quoted-argument]=fg=yellow
+    ZSH_HIGHLIGHT_STYLES[single-quoted-argument]=fg=yellow
+    ZSH_HIGHLIGHT_STYLES[double-quoted-argument]=fg=yellow
+    ZSH_HIGHLIGHT_STYLES[dollar-quoted-argument]=fg=yellow
+    ZSH_HIGHLIGHT_STYLES[dollar-double-quoted-argument]=fg=cyan
+    ZSH_HIGHLIGHT_STYLES[back-double-quoted-argument]=fg=cyan
+    ZSH_HIGHLIGHT_STYLES[back-dollar-quoted-argument]=fg=cyan
+    ZSH_HIGHLIGHT_STYLES[assign]=none
+    ZSH_HIGHLIGHT_STYLES[redirection]=fg=yellow,bold
+    ZSH_HIGHLIGHT_STYLES[comment]=fg=black,bold
+    ZSH_HIGHLIGHT_STYLES[arg0]=fg=green,bold
+    
+    # パターンハイライト
+    ZSH_HIGHLIGHT_PATTERNS+=('rm -rf *' 'fg=white,bold,bg=red')
+    ZSH_HIGHLIGHT_PATTERNS+=('sudo *' 'fg=white,bold,bg=red')
+    
     source "{{ .homebrew_prefix }}/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
+fi
+
+# zsh-completions（追加補完）
+if [[ -d "{{ .homebrew_prefix }}/share/zsh-completions" ]]; then
+    fpath=("{{ .homebrew_prefix }}/share/zsh-completions" $fpath)
 fi
 
 # fzf（pecoの代替）
@@ -70,16 +124,21 @@ if command -v fzf >/dev/null 2>&1; then
     fi
 fi
 
-# Starshipプロンプト
-if command -v starship >/dev/null 2>&1; then
+# zoxide（cd強化）
+if command -v zoxide >/dev/null 2>&1; then
+    eval "$(zoxide init zsh)"
+fi
+
+# Starshipプロンプト（対話的シェルでのみ）
+if command -v starship >/dev/null 2>&1 && [[ $- == *i* ]] && [[ "$TERM" != "dumb" ]]; then
     eval "$(starship init zsh)"
 else
-    # Starshipが無い場合のシンプルなプロンプト
+    # Starshipが無い場合や非対話的環境でのシンプルなプロンプト
     autoload -U colors && colors
     PROMPT="%{$fg[green]%}%n@%m%{$reset_color%} %{$fg[blue]%}%~%{$reset_color%} %# "
 fi
 
-# zshの設定
+# zsh設定
 setopt AUTO_CD              # ディレクトリ名だけでcd
 setopt AUTO_PUSHD           # cdでpushdする
 setopt PUSHD_IGNORE_DUPS    # 重複するディレクトリはpushdしない
@@ -88,135 +147,48 @@ setopt HIST_IGNORE_ALL_DUPS # 重複するコマンドは履歴に保存しな�
 setopt HIST_IGNORE_SPACE    # スペースで始まるコマンドは履歴に保存しない
 setopt HIST_REDUCE_BLANKS   # 履歴の余分な空白を削除
 setopt SHARE_HISTORY        # 履歴を共有
+setopt HIST_VERIFY          # 履歴展開時に確認
+setopt HIST_EXPIRE_DUPS_FIRST # 履歴が満杯時に重複を先に削除
+setopt HIST_FIND_NO_DUPS    # 履歴検索で重複を表示しない
+setopt HIST_SAVE_NO_DUPS    # 履歴保存時に重複を削除
+setopt INC_APPEND_HISTORY   # コマンド実行時に即座に履歴に追加
 setopt CORRECT              # コマンドの自動修正
+setopt CORRECT_ALL          # 引数も自動修正
+setopt NO_BEEP              # ビープ音を無効
+setopt INTERACTIVE_COMMENTS # インタラクティブモードでもコメントを有効
 
 # 履歴設定
 HISTFILE="$HOME/.zsh_history"
 HISTSIZE=100000
 SAVEHIST=100000
 
+# キーバインド（行頭移動をCtrl+Aに割当）
+bindkey -e                                 # Emacsキーマップをベースに
+bindkey '^A' beginning-of-line             # 共通
+bindkey -M viins '^A' beginning-of-line    # vi挿入モードでも有効
+bindkey -M vicmd '^A' beginning-of-line    # viコマンドモードでも有効
+
+# ===== モジュール読み込み =====
+# zsh設定ディレクトリ
+ZSH_CONFIG_DIR="$HOME/.config/zsh"
+
 # 補完設定
-autoload -U compinit
-compinit -u
+[[ -f "$ZSH_CONFIG_DIR/completions.zsh" ]] && source "$ZSH_CONFIG_DIR/completions.zsh"
 
-# 補完候補をメニュー選択可能に
-zstyle ':completion:*' menu select
+# エイリアス
+[[ -f "$ZSH_CONFIG_DIR/aliases.zsh" ]] && source "$ZSH_CONFIG_DIR/aliases.zsh"
 
-# 大文字小文字を区別しない補完
-zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
+# Git関連
+[[ -f "$ZSH_CONFIG_DIR/git.zsh" ]] && source "$ZSH_CONFIG_DIR/git.zsh"
 
-# エイリアス（新しいCLIツール使用）
-if command -v exa >/dev/null 2>&1; then
-    alias ls='exa'
-    alias ll='exa -l'
-    alias la='exa -la'
-    alias tree='exa --tree'
-elif command -v eza >/dev/null 2>&1; then
-    alias ls='eza'
-    alias ll='eza -l'
-    alias la='eza -la'
-    alias tree='eza --tree'
-fi
-
-if command -v bat >/dev/null 2>&1; then
-    alias cat='bat'
-fi
-
-if command -v fd >/dev/null 2>&1; then
-    alias find='fd'
-fi
-
-if command -v rg >/dev/null 2>&1; then
-    alias grep='rg'
-fi
-
-if command -v procs >/dev/null 2>&1; then
-    alias ps='procs'
-fi
-
-if command -v dust >/dev/null 2>&1; then
-    alias du='dust'
-fi
-
-if command -v bottom >/dev/null 2>&1; then
-    alias top='btm'
-fi
-
-# Git関連のエイリアス
-alias g='git'
-alias ga='git add'
-alias gc='git commit'
-alias gco='git checkout'
-alias gd='git diff'
-alias gl='git log --oneline --graph'
-alias gp='git push'
-alias gs='git status'
-
-# 一般的なエイリアス
-alias ..='cd ..'
-alias ...='cd ../..'
-alias ....='cd ../../..'
-alias vim='nvim'
-alias vi='nvim'
-alias zshconfig='nvim ~/.zshrc'
-
-# Homebrew自動同期エイリアス
-if [[ -x "$HOME/.local/share/chezmoi/brew-auto-sync.sh" ]]; then
-    alias brewi='$HOME/.local/share/chezmoi/brew-auto-sync.sh install'    # brew install + 自動同期
-    alias brewu='$HOME/.local/share/chezmoi/brew-auto-sync.sh uninstall'  # brew uninstall + 自動同期
-    alias brewup='$HOME/.local/share/chezmoi/brew-auto-sync.sh upgrade'   # brew upgrade + 自動同期
-    alias brewsync='$HOME/.local/share/chezmoi/brew-auto-sync.sh sync'    # Brewfile手動同期
-    alias brewbundle='$HOME/.local/share/chezmoi/brew-auto-sync.sh bundle' # Brewfileから復元
-fi
+# tmux関連
+[[ -f "$ZSH_CONFIG_DIR/tmux.zsh" ]] && source "$ZSH_CONFIG_DIR/tmux.zsh"
 
 # カスタム関数
-
-# ghqとfzfを使ったリポジトリ移動
-if command -v ghq >/dev/null 2>&1 && command -v fzf >/dev/null 2>&1; then
-    function ghq-fzf() {
-        local selected_dir=$(ghq list -p | fzf --query "$LBUFFER")
-        if [ -n "$selected_dir" ]; then
-            BUFFER="cd ${selected_dir}"
-            zle accept-line
-        fi
-        zle clear-screen
-    }
-    zle -N ghq-fzf
-    bindkey '^]' ghq-fzf
-fi
-
-# プロセス終了用の関数
-function fkill() {
-    local pid
-    if [ "$UID" != "0" ]; then
-        pid=$(ps -f -u $UID | sed 1d | fzf -m | awk '{print $2}')
-    else
-        pid=$(ps -ef | sed 1d | fzf -m | awk '{print $2}')
-    fi
-
-    if [ "x$pid" != "x" ]; then
-        echo $pid | xargs kill -${1:-9}
-    fi
-}
-
-# gitブランチ削除用の関数（元の設定を改良）
-function git-prune-branches() {
-    git fetch --prune origin
-    git branch --merged origin/main | grep -vE ' main$|^\*' | xargs -r git branch -d
-    git branch --merged origin/master | grep -vE ' master$|^\*' | xargs -r git branch -d
-}
-
-function git-prune-branches-dry-run() {
-    echo "=== Dry run: branches to be deleted ==="
-    git fetch --dry-run --prune origin
-    echo "Merged with main:"
-    git branch --merged origin/main | grep -vE ' main$|^\*'
-    echo "Merged with master:"
-    git branch --merged origin/master | grep -vE ' master$|^\*'
-}
+[[ -f "$ZSH_CONFIG_DIR/functions.zsh" ]] && source "$ZSH_CONFIG_DIR/functions.zsh"
 
 # tmux自動起動（セッション管理改良）
-if command -v tmux >/dev/null 2>&1 && [ -z "$TMUX" ] && [ "$TERM_PROGRAM" != "vscode" ]; then
+if command -v tmux >/dev/null 2>&1 && [ -z "$TMUX" ] && [ "$TERM_PROGRAM" != "vscode" ] && [[ $- == *i* ]] && [[ "$TERM" != "dumb" ]]; then
     # tmuxのセッション一覧を取得
     sessions=$(tmux list-sessions 2>/dev/null)
     
@@ -244,6 +216,22 @@ fi
 # Google Cloud SDK（存在する場合のみ）
 [ -f ~/google-cloud-sdk/path.zsh.inc ] && source ~/google-cloud-sdk/path.zsh.inc
 [ -f ~/google-cloud-sdk/completion.zsh.inc ] && source ~/google-cloud-sdk/completion.zsh.inc
+
+# zsh-history-substring-search（履歴検索）- 最後に読み込み
+if [[ -f "{{ .homebrew_prefix }}/share/zsh-history-substring-search/zsh-history-substring-search.zsh" ]]; then
+    source "{{ .homebrew_prefix }}/share/zsh-history-substring-search/zsh-history-substring-search.zsh"
+    
+    # 履歴検索設定
+    HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_FOUND='bg=green,fg=white,bold'
+    HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_NOT_FOUND='bg=red,fg=white,bold'
+    HISTORY_SUBSTRING_SEARCH_GLOBBING_FLAGS='i'
+    
+    # 履歴検索キーバインド
+    bindkey '^[[A' history-substring-search-up     # 上矢印
+    bindkey '^[[B' history-substring-search-down   # 下矢印
+    bindkey '^P' history-substring-search-up       # Ctrl+P
+    bindkey '^N' history-substring-search-down     # Ctrl+N
+fi
 
 # ローカル設定ファイル（存在する場合のみ）
 [ -f ~/.zshrc.local ] && source ~/.zshrc.local
