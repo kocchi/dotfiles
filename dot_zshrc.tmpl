@@ -51,7 +51,7 @@ if [[ -f "{{ .homebrew_prefix }}/share/zsh-autosuggestions/zsh-autosuggestions.z
     
     # キーバインド
     bindkey '^ ' autosuggest-accept      # Ctrl+Space で補完を受け入れ
-    bindkey '^[[C' forward-char          # 右矢印で1文字受け入れ
+    bindkey '^[[C' autosuggest-accept    # 右矢印で補完を受け入れ
     bindkey '^F' autosuggest-accept      # Ctrl+F で全体受け入れ
 fi
 

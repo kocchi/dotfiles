@@ -27,6 +27,7 @@ brew "trash"
 brew "tree"
 brew "wget"
 brew "yq"
+
 brew "zoxide"
 brew "zsh-autosuggestions"
 brew "zsh-completions"
