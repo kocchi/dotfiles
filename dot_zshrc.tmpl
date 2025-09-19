@@ -42,11 +42,12 @@ if [[ -f "{{ .homebrew_prefix }}/share/zsh-autosuggestions/zsh-autosuggestions.z
     source "{{ .homebrew_prefix }}/share/zsh-autosuggestions/zsh-autosuggestions.zsh"
     
     # 自動補完設定
-    ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="fg=#666666,bold"
+    ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="fg=#6c7086,italic"
     ZSH_AUTOSUGGEST_STRATEGY=(history completion)
     ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE=20
     ZSH_AUTOSUGGEST_USE_ASYNC=1
     ZSH_AUTOSUGGEST_MANUAL_REBIND=1
+    ZSH_AUTOSUGGEST_ACCEPT_WIDGETS=(end-of-line vi-end-of-line vi-add-eol)
     
     # キーバインド
     bindkey '^ ' autosuggest-accept      # Ctrl+Space で補完を受け入れ
@@ -174,6 +175,9 @@ ZSH_CONFIG_DIR="$HOME/.config/zsh"
 
 # 補完設定
 [[ -f "$ZSH_CONFIG_DIR/completions.zsh" ]] && source "$ZSH_CONFIG_DIR/completions.zsh"
+
+# 色設定
+[[ -f "$ZSH_CONFIG_DIR/colors.zsh" ]] && source "$ZSH_CONFIG_DIR/colors.zsh"
 
 # エイリアス
 [[ -f "$ZSH_CONFIG_DIR/aliases.zsh" ]] && source "$ZSH_CONFIG_DIR/aliases.zsh"

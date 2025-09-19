@@ -312,6 +312,7 @@ t l             # セッション一覧
 │   ├── starship.toml        # Starshipプロンプト設定
 │   └── zsh/                 # zsh設定モジュール
 │       ├── aliases.zsh      # エイリアス定義
+│       ├── colors.zsh       # 色設定・テーマ
 │       ├── completions.zsh  # 補完設定
 │       ├── functions.zsh    # カスタム関数
 │       ├── git.zsh          # Git関連関数
