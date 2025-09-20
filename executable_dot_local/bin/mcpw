@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Playwright MCP launcher
+# Usage: mcpw [--caps=vision,pdf,tracing,verify] [extra flags]
+
+cmd=(npx -y @playwright/mcp)
+
+# If you prefer specific default caps, uncomment the next line:
+# cmd+=(--caps=vision,pdf,tracing,verify)
+
+exec "${cmd[@]}" "$@"
+
+

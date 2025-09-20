@@ -27,3 +27,24 @@ function fkill() {
         echo $pid | xargs kill -${1:-9}
     fi
 }
+
+# Playwright MCP ランチャー
+function mcpw() {
+    local cmd
+    if command -v @playwright/mcp >/dev/null 2>&1; then
+        cmd=(@playwright/mcp)
+    elif command -v playwright-mcp >/dev/null 2>&1; then
+        cmd=(playwright-mcp)
+    else
+        cmd=(npx -y @playwright/mcp)
+    fi
+
+    # 代表的なcapabilitiesをワンショットで有効化できるショートカット
+    # 例: mcpw all -> 全capを有効化
+    if [[ ${1-} == "all" ]]; then
+        shift
+        exec "${cmd[@]}" --caps=vision,pdf,tracing,verify "$@"
+    fi
+
+    exec "${cmd[@]}" "$@"
+}
