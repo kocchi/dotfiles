@@ -1,6 +1,12 @@
 # zsh補完設定
 autoload -U compinit
-compinit -u
+
+# 補完キャッシュの最適化（1日に1回のみチェック）
+if [[ -n ${ZDOTDIR}/.zcompdump(#qN.mh+24) ]]; then
+    compinit -u
+else
+    compinit -C -u
+fi
 
 # 補完候補をメニュー選択可能に
 zstyle ':completion:*' menu select

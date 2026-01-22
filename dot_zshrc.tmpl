@@ -1,3 +1,8 @@
+# VSCode/Cursor統合シェル環境の検出（早期リターン用）
+if [[ -n "$VSCODE_INJECTION" ]] || [[ "$TERM_PROGRAM" == "vscode" ]]; then
+    export VSCODE_SHELL=1
+fi
+
 # XDG Base Directory Specification
 export XDG_CONFIG_HOME="$HOME/.config"
 export XDG_DATA_HOME="$HOME/.local/share"
@@ -121,18 +126,29 @@ if command -v fzf >/dev/null 2>&1; then
     fi
 fi
 
-# zoxide（cd強化）
+# zoxide（cd強化）- VSCode/Cursor環境では非対話的シェルでスキップ
 if command -v zoxide >/dev/null 2>&1; then
-    eval "$(zoxide init zsh)"
+    if [[ -z "$VSCODE_SHELL" ]] || [[ $- == *i* ]]; then
+        eval "$(zoxide init zsh)"
+    fi
 fi
 
-# Starshipプロンプト（対話的シェルでのみ）
-if command -v starship >/dev/null 2>&1 && [[ $- == *i* ]] && [[ "$TERM" != "dumb" ]]; then
-    eval "$(starship init zsh)"
+# Starshipプロンプト（対話的シェルでのみ、VSCode/Cursor環境では軽量化）
+if [[ $- == *i* ]] && [[ "$TERM" != "dumb" ]]; then
+    if command -v starship >/dev/null 2>&1 && [[ -z "$VSCODE_SHELL" ]]; then
+        eval "$(starship init zsh)"
+    elif command -v starship >/dev/null 2>&1 && [[ -n "$VSCODE_SHELL" ]]; then
+        # VSCode/Cursor環境では軽量プロンプト
+        autoload -U colors && colors
+        PROMPT="%{$fg[green]%}%n@%m%{$reset_color%} %{$fg[blue]%}%~%{$reset_color%} %# "
+    else
+        # Starshipが無い場合でのシンプルなプロンプト
+        autoload -U colors && colors
+        PROMPT="%{$fg[green]%}%n@%m%{$reset_color%} %{$fg[blue]%}%~%{$reset_color%} %# "
+    fi
 else
-    # Starshipが無い場合や非対話的環境でのシンプルなプロンプト
-    autoload -U colors && colors
-    PROMPT="%{$fg[green]%}%n@%m%{$reset_color%} %{$fg[blue]%}%~%{$reset_color%} %# "
+    # 非対話的環境でのシンプルなプロンプト
+    PROMPT="%n@%m %~ %# "
 fi
 
 # zsh設定
