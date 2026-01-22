@@ -2,7 +2,10 @@
 autoload -U compinit
 
 # 補完キャッシュの最適化（1日に1回のみチェック）
-if [[ -n ${ZDOTDIR}/.zcompdump(#qN.mh+24) ]]; then
+# VSCode/Cursor環境では常にキャッシュを使用
+if [[ -n "$VSCODE_SHELL" ]]; then
+    compinit -C -u
+elif [[ -n ${HOME}/.zcompdump(#qN.mh+24) ]]; then
     compinit -u
 else
     compinit -C -u

@@ -1,6 +1,9 @@
-# VSCode/Cursor統合シェル環境の検出（早期リターン用）
-if [[ -n "$VSCODE_INJECTION" ]] || [[ "$TERM_PROGRAM" == "vscode" ]]; then
-    export VSCODE_SHELL=1
+# VSCode/Cursor統合シェル環境の検出
+# .zprofileで設定済みの場合はスキップ
+if [[ -z "$VSCODE_SHELL" ]]; then
+    if [[ -n "$VSCODE_INJECTION" ]] || [[ "$TERM_PROGRAM" == "vscode" ]] || [[ -n "$VSCODE_IPC_HOOK_CLI" ]] || [[ -n "$CURSOR_SHELL_INTEGRATION" ]] || [[ "$TERM_PROGRAM" == "Cursor" ]]; then
+        export VSCODE_SHELL=1
+    fi
 fi
 
 # XDG Base Directory Specification
@@ -31,19 +34,39 @@ path=(
 # 一意なパスのみを保持
 typeset -U path PATH
 
-# Homebrewの設定
-if [[ -d "{{ .homebrew_prefix }}" ]]; then
-    eval "$({{ .homebrew_prefix }}/bin/brew shellenv)"
+# Homebrewの設定（.zprofileで設定済みの場合はスキップ）
+if [[ -z "$HOMEBREW_SHELLENV_DONE" ]] && [[ -d "{{ .homebrew_prefix }}" ]]; then
+    if [[ -z "$VSCODE_SHELL" ]]; then
+        eval "$({{ .homebrew_prefix }}/bin/brew shellenv)"
+    else
+        # VSCode/Cursor環境では最小限の設定のみ
+        export HOMEBREW_PREFIX="{{ .homebrew_prefix }}"
+        export HOMEBREW_CELLAR="{{ .homebrew_prefix }}/Cellar"
+        export HOMEBREW_REPOSITORY="{{ .homebrew_prefix }}"
+        export MANPATH="{{ .homebrew_prefix }}/share/man${MANPATH+:$MANPATH}:"
+        export INFOPATH="{{ .homebrew_prefix }}/share/info:${INFOPATH:-}"
+    fi
 fi
 
-# asdf（言語バージョン管理）
+# 非対話的シェル（コマンド実行のみ）の場合は早期リターン
+# PATH、基本環境変数、Homebrewの設定まで完了
+if [[ ! -o interactive ]]; then
+    return 0
+fi
+
+# asdf（言語バージョン管理）- VSCode/Cursor環境では対話的シェルのみ
 if [[ -f "$HOME/.asdf/asdf.sh" ]]; then
-    source "$HOME/.asdf/asdf.sh"
-    source "$HOME/.asdf/completions/asdf.bash"
+    if [[ -z "$VSCODE_SHELL" ]] || [[ $- == *i* ]]; then
+        source "$HOME/.asdf/asdf.sh"
+        # 補完は対話的シェルでのみ
+        if [[ $- == *i* ]]; then
+            source "$HOME/.asdf/completions/asdf.bash"
+        fi
+    fi
 fi
 
-# zsh-autosuggestions（Homebrewでインストール）
-if [[ -f "{{ .homebrew_prefix }}/share/zsh-autosuggestions/zsh-autosuggestions.zsh" ]]; then
+# zsh-autosuggestions（Homebrewでインストール）- VSCode/Cursor環境ではスキップ
+if [[ -z "$VSCODE_SHELL" ]] && [[ -f "{{ .homebrew_prefix }}/share/zsh-autosuggestions/zsh-autosuggestions.zsh" ]]; then
     source "{{ .homebrew_prefix }}/share/zsh-autosuggestions/zsh-autosuggestions.zsh"
     
     # 自動補完設定
@@ -56,8 +79,8 @@ if [[ -f "{{ .homebrew_prefix }}/share/zsh-autosuggestions/zsh-autosuggestions.z
     
 fi
 
-# zsh-syntax-highlighting（Homebrewでインストール）
-if [[ -f "{{ .homebrew_prefix }}/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" ]]; then
+# zsh-syntax-highlighting（Homebrewでインストール）- VSCode/Cursor環境ではスキップ（最も重い）
+if [[ -z "$VSCODE_SHELL" ]] && [[ -f "{{ .homebrew_prefix }}/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" ]]; then
     # シンタックスハイライト設定
     ZSH_HIGHLIGHT_HIGHLIGHTERS=(main brackets pattern cursor)
     
@@ -105,7 +128,7 @@ if [[ -d "{{ .homebrew_prefix }}/share/zsh-completions" ]]; then
     fpath=("{{ .homebrew_prefix }}/share/zsh-completions" $fpath)
 fi
 
-# fzf（pecoの代替）
+# fzf（pecoの代替）- VSCode/Cursor環境では対話的シェルのみ
 if command -v fzf >/dev/null 2>&1; then
     # fzfの設定
     export FZF_DEFAULT_OPTS="--height 40% --layout=reverse --border --margin=1 --padding=1"
@@ -116,27 +139,33 @@ if command -v fzf >/dev/null 2>&1; then
         export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
     fi
     
-    # fzfのキーバインド
-    [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
-    
-    # Homebrewでインストールした場合
-    if [[ -f "{{ .homebrew_prefix }}/opt/fzf/shell/key-bindings.zsh" ]]; then
-        source "{{ .homebrew_prefix }}/opt/fzf/shell/key-bindings.zsh"
-        source "{{ .homebrew_prefix }}/opt/fzf/shell/completion.zsh"
+    # キーバインドと補完は対話的シェルかつzle利用可能な場合のみ
+    if [[ $- == *i* ]] && zmodload -e zsh/zle 2>/dev/null; then
+        # fzfのキーバインド
+        [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh 2>/dev/null
+        
+        # Homebrewでインストールした場合
+        if [[ -f "{{ .homebrew_prefix }}/opt/fzf/shell/key-bindings.zsh" ]]; then
+            source "{{ .homebrew_prefix }}/opt/fzf/shell/key-bindings.zsh" 2>/dev/null
+            # VSCode/Cursor環境では補完をスキップ
+            if [[ -z "$VSCODE_SHELL" ]]; then
+                source "{{ .homebrew_prefix }}/opt/fzf/shell/completion.zsh" 2>/dev/null
+            fi
+        fi
     fi
 fi
 
 # zoxide（cd強化）- VSCode/Cursor環境では非対話的シェルでスキップ
-if command -v zoxide >/dev/null 2>&1; then
+if command -v zoxide >/dev/null 2>&1 && zmodload -e zsh/zle 2>/dev/null; then
     if [[ -z "$VSCODE_SHELL" ]] || [[ $- == *i* ]]; then
-        eval "$(zoxide init zsh)"
+        eval "$(zoxide init zsh 2>/dev/null)"
     fi
 fi
 
 # Starshipプロンプト（対話的シェルでのみ、VSCode/Cursor環境では軽量化）
-if [[ $- == *i* ]] && [[ "$TERM" != "dumb" ]]; then
+if [[ $- == *i* ]] && [[ "$TERM" != "dumb" ]] && zmodload -e zsh/zle 2>/dev/null; then
     if command -v starship >/dev/null 2>&1 && [[ -z "$VSCODE_SHELL" ]]; then
-        eval "$(starship init zsh)"
+        eval "$(starship init zsh 2>/dev/null)"
     elif command -v starship >/dev/null 2>&1 && [[ -n "$VSCODE_SHELL" ]]; then
         # VSCode/Cursor環境では軽量プロンプト
         autoload -U colors && colors
@@ -147,7 +176,7 @@ if [[ $- == *i* ]] && [[ "$TERM" != "dumb" ]]; then
         PROMPT="%{$fg[green]%}%n@%m%{$reset_color%} %{$fg[blue]%}%~%{$reset_color%} %# "
     fi
 else
-    # 非対話的環境でのシンプルなプロンプト
+    # 非対話的環境またはzle未初期化時のシンプルなプロンプト
     PROMPT="%n@%m %~ %# "
 fi
 
@@ -175,36 +204,44 @@ HISTFILE="$HOME/.zsh_history"
 HISTSIZE=100000
 SAVEHIST=100000
 
-# キーバインド（行頭移動をCtrl+Aに割当）
-bindkey -e                                 # Emacsキーマップをベースに
-bindkey '^A' beginning-of-line             # 共通
-bindkey -M viins '^A' beginning-of-line    # vi挿入モードでも有効
-bindkey -M vicmd '^A' beginning-of-line    # viコマンドモードでも有効
+# キーバインド（行頭移動をCtrl+Aに割当）- zleが利用可能な場合のみ
+if zmodload -e zsh/zle 2>/dev/null; then
+    bindkey -e                                 # Emacsキーマップをベースに
+    bindkey '^A' beginning-of-line             # 共通
+    bindkey -M viins '^A' beginning-of-line    # vi挿入モードでも有効
+    bindkey -M vicmd '^A' beginning-of-line    # viコマンドモードでも有効
+fi
 
 # ===== モジュール読み込み =====
 # zsh設定ディレクトリ
 ZSH_CONFIG_DIR="$HOME/.config/zsh"
 
-# 補完設定
+# 補完設定（常に必要）
 [[ -f "$ZSH_CONFIG_DIR/completions.zsh" ]] && source "$ZSH_CONFIG_DIR/completions.zsh"
 
-# 色設定
-[[ -f "$ZSH_CONFIG_DIR/colors.zsh" ]] && source "$ZSH_CONFIG_DIR/colors.zsh"
+# 色設定（VSCode/Cursor環境では対話的シェルのみ）
+if [[ -z "$VSCODE_SHELL" ]] || [[ $- == *i* ]]; then
+    [[ -f "$ZSH_CONFIG_DIR/colors.zsh" ]] && source "$ZSH_CONFIG_DIR/colors.zsh"
+fi
 
-# エイリアス
+# エイリアス（常に必要）
 [[ -f "$ZSH_CONFIG_DIR/aliases.zsh" ]] && source "$ZSH_CONFIG_DIR/aliases.zsh"
 
-# Git関連
+# Git関連（常に必要）
 [[ -f "$ZSH_CONFIG_DIR/git.zsh" ]] && source "$ZSH_CONFIG_DIR/git.zsh"
 
-# tmux関連
-[[ -f "$ZSH_CONFIG_DIR/tmux.zsh" ]] && source "$ZSH_CONFIG_DIR/tmux.zsh"
+# tmux関連（VSCode/Cursor環境ではスキップ）
+if [[ -z "$VSCODE_SHELL" ]]; then
+    [[ -f "$ZSH_CONFIG_DIR/tmux.zsh" ]] && source "$ZSH_CONFIG_DIR/tmux.zsh"
+fi
 
-# カスタム関数
-[[ -f "$ZSH_CONFIG_DIR/functions.zsh" ]] && source "$ZSH_CONFIG_DIR/functions.zsh"
+# カスタム関数（対話的シェルのみ）
+if [[ $- == *i* ]]; then
+    [[ -f "$ZSH_CONFIG_DIR/functions.zsh" ]] && source "$ZSH_CONFIG_DIR/functions.zsh"
+fi
 
-# tmux自動起動（セッション管理改良）
-if command -v tmux >/dev/null 2>&1 && [ -z "$TMUX" ] && [ "$TERM_PROGRAM" != "vscode" ] && [[ $- == *i* ]] && [[ "$TERM" != "dumb" ]]; then
+# tmux自動起動（セッション管理改良）- VSCode/Cursor環境では完全にスキップ
+if [[ -z "$VSCODE_SHELL" ]] && command -v tmux >/dev/null 2>&1 && [ -z "$TMUX" ] && [ "$TERM_PROGRAM" != "vscode" ] && [[ $- == *i* ]] && [[ "$TERM" != "dumb" ]]; then
     # tmuxのセッション一覧を取得
     sessions=$(tmux list-sessions 2>/dev/null)
     
@@ -226,15 +263,21 @@ if command -v tmux >/dev/null 2>&1 && [ -z "$TMUX" ] && [ "$TERM_PROGRAM" != "vs
     fi
 fi
 
-# iTerm2 Shell Integration（存在する場合のみ）
-[ -f ~/.iterm2_shell_integration.zsh ] && source ~/.iterm2_shell_integration.zsh
+# iTerm2 Shell Integration（存在する場合のみ）- VSCode/Cursor環境ではスキップ
+if [[ -z "$VSCODE_SHELL" ]]; then
+    [ -f ~/.iterm2_shell_integration.zsh ] && source ~/.iterm2_shell_integration.zsh
+fi
 
-# Google Cloud SDK（存在する場合のみ）
-[ -f ~/google-cloud-sdk/path.zsh.inc ] && source ~/google-cloud-sdk/path.zsh.inc
-[ -f ~/google-cloud-sdk/completion.zsh.inc ] && source ~/google-cloud-sdk/completion.zsh.inc
+# Google Cloud SDK（存在する場合のみ）- VSCode/Cursor環境では対話的シェルのみ
+if [[ -z "$VSCODE_SHELL" ]] || [[ $- == *i* ]]; then
+    [ -f ~/google-cloud-sdk/path.zsh.inc ] && source ~/google-cloud-sdk/path.zsh.inc
+    if [[ $- == *i* ]]; then
+        [ -f ~/google-cloud-sdk/completion.zsh.inc ] && source ~/google-cloud-sdk/completion.zsh.inc
+    fi
+fi
 
-# zsh-history-substring-search（履歴検索）- 最後に読み込み
-if [[ -f "{{ .homebrew_prefix }}/share/zsh-history-substring-search/zsh-history-substring-search.zsh" ]]; then
+# zsh-history-substring-search（履歴検索）- VSCode/Cursor環境ではスキップ
+if [[ -z "$VSCODE_SHELL" ]] && [[ -f "{{ .homebrew_prefix }}/share/zsh-history-substring-search/zsh-history-substring-search.zsh" ]]; then
     source "{{ .homebrew_prefix }}/share/zsh-history-substring-search/zsh-history-substring-search.zsh"
     
     # 履歴検索設定
@@ -242,15 +285,18 @@ if [[ -f "{{ .homebrew_prefix }}/share/zsh-history-substring-search/zsh-history-
     HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_NOT_FOUND='bg=red,fg=white,bold'
     HISTORY_SUBSTRING_SEARCH_GLOBBING_FLAGS='i'
     
-    # 履歴検索キーバインド
-    bindkey '^[[A' history-substring-search-up     # 上矢印
-    bindkey '^[[B' history-substring-search-down   # 下矢印
-    bindkey '^P' history-substring-search-up       # Ctrl+P
-    bindkey '^N' history-substring-search-down     # Ctrl+N
+    # 履歴検索キーバインド（zleが利用可能な場合のみ）
+    if zmodload -e zsh/zle 2>/dev/null; then
+        bindkey '^[[A' history-substring-search-up     # 上矢印
+        bindkey '^[[B' history-substring-search-down   # 下矢印
+        bindkey '^P' history-substring-search-up       # Ctrl+P
+        bindkey '^N' history-substring-search-down     # Ctrl+N
+    fi
 fi
 
 # キーバインド（最後に設定して他の設定による上書きを防ぐ）
-if command -v _zsh_autosuggest_bind_widgets >/dev/null 2>&1; then
+# zleが利用可能な場合のみ
+if [[ -z "$VSCODE_SHELL" ]] && zmodload -e zsh/zle 2>/dev/null && command -v _zsh_autosuggest_bind_widgets >/dev/null 2>&1; then
     bindkey '^ ' autosuggest-accept      # Ctrl+Space で補完を受け入れ
     bindkey '^[[C' autosuggest-accept    # 右矢印で補完を受け入れ
     bindkey '^F' autosuggest-accept      # Ctrl+F で全体受け入れ

@@ -1,7 +1,7 @@
 # カスタム関数
 
-# ghqとfzfを使ったリポジトリ移動
-if command -v ghq >/dev/null 2>&1 && command -v fzf >/dev/null 2>&1; then
+# ghqとfzfを使ったリポジトリ移動（zleが利用可能な場合のみ）
+if command -v ghq >/dev/null 2>&1 && command -v fzf >/dev/null 2>&1 && zmodload -e zsh/zle 2>/dev/null; then
     function ghq-fzf() {
         local selected_dir=$(ghq list -p | fzf --query "$LBUFFER")
         if [ -n "$selected_dir" ]; then

@@ -1,0 +1,27 @@
+# .zprofile - ログインシェルで読み込まれる（VS Code/Cursorのシェル環境解決時も含む）
+# 注意: ここでの処理はシェル起動速度に直接影響するため、最小限に抑える
+
+# VS Code/Cursor環境の検出
+# シェル環境解決プロセスでは非対話的なログインシェルが起動される
+if [[ -n "$VSCODE_INJECTION" ]] || [[ "$TERM_PROGRAM" == "vscode" ]] || [[ -n "$VSCODE_IPC_HOOK_CLI" ]] || [[ -n "$CURSOR_SHELL_INTEGRATION" ]] || [[ "$TERM_PROGRAM" == "Cursor" ]]; then
+    export VSCODE_SHELL=1
+fi
+
+# Homebrewの設定
+# VS Code/Cursor環境では eval を避けて直接設定（高速化）
+if [[ -d "{{ .homebrew_prefix }}" ]]; then
+    if [[ -n "$VSCODE_SHELL" ]]; then
+        # VS Code/Cursor環境: 直接環境変数を設定（eval のオーバーヘッドを回避）
+        export HOMEBREW_PREFIX="{{ .homebrew_prefix }}"
+        export HOMEBREW_CELLAR="{{ .homebrew_prefix }}/Cellar"
+        export HOMEBREW_REPOSITORY="{{ .homebrew_prefix }}"
+        export PATH="{{ .homebrew_prefix }}/bin:{{ .homebrew_prefix }}/sbin${PATH+:$PATH}"
+        export MANPATH="{{ .homebrew_prefix }}/share/man${MANPATH+:$MANPATH}:"
+        export INFOPATH="{{ .homebrew_prefix }}/share/info:${INFOPATH:-}"
+    else
+        # 通常環境: brew shellenv を使用
+        eval "$({{ .homebrew_prefix }}/bin/brew shellenv)"
+    fi
+    # Homebrewの設定が完了したことをマーク
+    export HOMEBREW_SHELLENV_DONE=1
+fi
