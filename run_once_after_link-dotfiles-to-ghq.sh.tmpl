@@ -1,0 +1,16 @@
+#!/bin/bash
+# Create symlink to dotfiles in ghq directory for consistency
+# This runs AFTER other setup (including ghq installation)
+
+set -e
+
+GHQ_ROOT="${GHQ_ROOT:-$(ghq root 2>/dev/null || echo "$HOME/ghq")}"
+DOTFILES_LINK="$GHQ_ROOT/github.com/kocchi/dotfiles"
+CHEZMOI_SOURCE="$HOME/.local/share/chezmoi"
+
+# Only create if ghq root exists and link doesn't
+if [ -d "$GHQ_ROOT" ] && [ ! -e "$DOTFILES_LINK" ]; then
+    mkdir -p "$(dirname "$DOTFILES_LINK")"
+    ln -s "$CHEZMOI_SOURCE" "$DOTFILES_LINK"
+    echo "✅ Linked dotfiles to ghq: $DOTFILES_LINK"
+fi

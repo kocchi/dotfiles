@@ -1,0 +1,85 @@
+#!/bin/bash
+# Setup user-model-framework plugin
+# This script runs once per machine to clone and link the OSS plugin
+
+set -e
+
+REPO="github.com/kocchi/user-model-framework"
+GHQ_ROOT="${GHQ_ROOT:-$(ghq root 2>/dev/null || echo "$HOME/ghq")}"
+PLUGIN_DIR="$GHQ_ROOT/$REPO"
+AGENT_DIR="$HOME/.agent"
+
+echo "🔧 Setting up user-model-framework..."
+
+# Clone using ghq if available, otherwise git clone
+if [ ! -d "$PLUGIN_DIR" ]; then
+    echo "📦 Cloning user-model-framework..."
+    if command -v ghq &> /dev/null; then
+        ghq get "$REPO"
+    else
+        mkdir -p "$(dirname "$PLUGIN_DIR")"
+        git clone "https://$REPO.git" "$PLUGIN_DIR"
+    fi
+else
+    echo "✅ Plugin already exists at $PLUGIN_DIR"
+fi
+
+# Create ~/.agent directories if needed
+mkdir -p "$AGENT_DIR"
+
+# Link skills (merge with existing)
+if [ -d "$PLUGIN_DIR/skills" ]; then
+    mkdir -p "$AGENT_DIR/skills"
+    for skill in "$PLUGIN_DIR/skills"/*; do
+        skill_name=$(basename "$skill")
+        target="$AGENT_DIR/skills/$skill_name"
+        if [ ! -e "$target" ]; then
+            ln -sf "$skill" "$target"
+            echo "  ✅ Linked skill: $skill_name"
+        fi
+    done
+fi
+
+# Link rules (merge with existing)
+if [ -d "$PLUGIN_DIR/rules" ]; then
+    mkdir -p "$AGENT_DIR/rules"
+    for rule in "$PLUGIN_DIR/rules"/*; do
+        rule_name=$(basename "$rule")
+        target="$AGENT_DIR/rules/$rule_name"
+        if [ ! -e "$target" ]; then
+            ln -sf "$rule" "$target"
+            echo "  ✅ Linked rule: $rule_name"
+        fi
+    done
+fi
+
+# Link schema
+if [ -d "$PLUGIN_DIR/schema" ]; then
+    mkdir -p "$AGENT_DIR/schema"
+    for schema in "$PLUGIN_DIR/schema"/*; do
+        schema_name=$(basename "$schema")
+        target="$AGENT_DIR/schema/$schema_name"
+        if [ ! -e "$target" ]; then
+            ln -sf "$schema" "$target"
+            echo "  ✅ Linked schema: $schema_name"
+        fi
+    done
+fi
+
+# Link templates
+if [ -d "$PLUGIN_DIR/templates" ]; then
+    mkdir -p "$AGENT_DIR/templates"
+    for tmpl in "$PLUGIN_DIR/templates"/*; do
+        tmpl_name=$(basename "$tmpl")
+        target="$AGENT_DIR/templates/$tmpl_name"
+        if [ ! -e "$target" ]; then
+            ln -sf "$tmpl" "$target"
+            echo "  ✅ Linked template: $tmpl_name"
+        fi
+    done
+fi
+
+echo ""
+echo "✅ user-model-framework setup complete!"
+echo "   Plugin: $PLUGIN_DIR"
+echo "   Agent:  $AGENT_DIR"
