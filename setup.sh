@@ -155,6 +155,51 @@ setup_starship() {
     log_success "Starshipの設定確認が完了しました"
 }
 
+# Agent Skills のセットアップ (Cursor & Claude Code 共通)
+setup_agent_skills() {
+    log_info "Agent Skills をセットアップしています..."
+    
+    local agent_skills_dir="$HOME/.agent/skills"
+    local claude_skills_link="$HOME/.claude/skills"
+    local cursor_skills_link="$HOME/.cursor/skills"
+    local claude_settings="$HOME/.claude/settings.json"
+    
+    # ~/.agent/skills ディレクトリの確認（自作 Skill 用）
+    if [[ -d "$agent_skills_dir" ]]; then
+        log_info "Agent Skills ディレクトリは既に存在します: $agent_skills_dir"
+    else
+        mkdir -p "$agent_skills_dir"
+        log_success "Agent Skills ディレクトリを作成しました: $agent_skills_dir"
+    fi
+    
+    # シンボリックリンクの確認
+    if [[ -L "$claude_skills_link" ]]; then
+        log_info "Claude Code用シンボリックリンクは既に存在します"
+    else
+        log_info "chezmoiでdotfilesを適用するとシンボリックリンクが作成されます"
+    fi
+    
+    if [[ -L "$cursor_skills_link" ]]; then
+        log_info "Cursor用シンボリックリンクは既に存在します"
+    else
+        log_info "chezmoiでdotfilesを適用するとシンボリックリンクが作成されます"
+    fi
+    
+    # Plugin 設定ファイルの確認
+    if [[ -f "$claude_settings" ]]; then
+        log_info "Claude Code Plugin 設定が存在します"
+        log_info "設定されているプラグイン:"
+        grep -o '"[^"]*@[^"]*"' "$claude_settings" 2>/dev/null | tr -d '"' | while read plugin; do
+            echo "    - $plugin"
+        done
+    else
+        log_warning "Claude Code Plugin 設定が見つかりません"
+        log_info "chezmoiでdotfilesを適用すると作成されます"
+    fi
+    
+    log_success "Agent Skills の確認が完了しました"
+}
+
 # chezmoiのインストールと設定適用
 setup_chezmoi() {
     if command_exists chezmoi; then
@@ -186,6 +231,7 @@ main() {
     setup_tmux_tpm
     setup_starship
     setup_chezmoi
+    setup_agent_skills
     
     log_success "セットアップが完了しました！"
     log_info "以下の追加作業を行ってください："
@@ -193,6 +239,11 @@ main() {
     echo "  2. tmuxを起動して 'prefix + I' でプラグインをインストール"
     echo "  3. Neovimを起動してプラグインの自動インストールを確認"
     echo "  4. 'asdf install <language> latest' で必要な言語をインストール"
+    echo ""
+    log_info "Claude Code / Cursor のプラグイン設定："
+    echo "  - プラグインは settings.json で管理されています"
+    echo "  - Claude Code 起動後、/plugin コマンドで確認・追加できます"
+    echo "  - 自作 Skill は ~/.agent/skills/ に配置してください"
     echo ""
     log_info "追加のヘルプが必要な場合は README.md を確認してください"
 }
