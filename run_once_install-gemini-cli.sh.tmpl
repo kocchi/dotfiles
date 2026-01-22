@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+echo "[chezmoi] Setting up Gemini CLI..."
+
+# Ensure Node.js is available
+if ! command -v node >/dev/null 2>&1; then
+  if command -v brew >/dev/null 2>&1; then
+    echo "[chezmoi] Installing Node.js via Homebrew"
+    brew install node
+  else
+    echo "[chezmoi] Homebrew not found. Please install Node.js manually." >&2
+    exit 1
+  fi
+fi
+
+# Install Gemini CLI if missing
+if ! command -v gemini >/dev/null 2>&1; then
+  echo "[chezmoi] Installing @google/gemini-cli globally via npm"
+  npm install -g @google/gemini-cli
+else
+  echo "[chezmoi] Gemini CLI already installed: $(gemini --version || true)"
+fi
+
+echo "[chezmoi] Gemini CLI setup complete. Run 'gemini' to authenticate."
+
+
+
