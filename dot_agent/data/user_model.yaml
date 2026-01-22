@@ -1,0 +1,187 @@
+# user_model.yaml
+version: "1.0"
+owner:
+  display_name: "Yuki Hirako"
+  timezone: "Asia/Tokyo"
+
+# ✅ 記憶は「安定（長期）」「可変（短期）」「ログ（学習）」に分ける
+stable:
+  north_star:
+    long_term_goals:
+      - "AIネイティブな開発・組織運営の型を確立する"
+      - "思考の構造を公開知として残す"
+    success_definition:
+      - "意思決定が『検査可能な中間生成物（前提・仮説・スコープ・制約・評価/テスト観点）』に落ちている"
+      - "提案が『次の一手（最小実験）＋検証方法＋分岐』まで含み、実行に移せる"
+      - "型が個人依存せず、テンプレ/チェックリスト/ログとして継承・更新されている"
+    non_negotiables:             # 絶対に守るもの
+      - "検査可能性"
+      - "構造的な意思決定"
+    non_negotiables_scope:
+      enforce_on: ["仕事の意思決定", "企画", "設計", "重要な文章", "会議設計"]
+      relax_on: ["雑談", "ブレスト初期", "感情の吐き出し"]
+    anti_goals:                  # こうはなりたくない
+      - "ウォーターフォール化（スペック確定待ちで停滞する）"
+      - "出力の押し合い（根拠・検査・制約がない量産）"
+      - "意思決定の属人化（判断軸が暗黙で再現できない）"
+
+  decision_engine:
+    values:
+      - name: "検査可能性"
+        meaning: "合意できる抽象度で検証できる状態を作る"
+        priority: "must"
+      - name: "前提・構造・関係性"
+        meaning: "人ではなくシステムとして捉える"
+        priority: "must"
+    quality_bar:
+      pass_conditions: []        # これを満たせばOK
+      common_failures:           # よくある減点
+        - "雑な要約"
+        - "安易な励まし"
+        - "一般論の羅列"
+      fix_order:                 # 直す順番のデフォルト
+        - "構造"
+        - "前提"
+        - "因果/指標"
+        - "具体化/実行手順"
+        - "表現"
+    tradeoff_policy:
+      speed_vs_depth: "balance"  # speed|depth|balance
+      abstract_vs_concrete: "iterate"  # decide_then_build|iterate
+      autonomy_vs_alignment: "alignment_then_autonomy"
+
+  thinking_os:
+    mental_models:               # よく使う語彙/理論
+      - "システム思考"
+      - "批判的思考"
+      - "アジャイル"
+      - "Team Topologies"
+      - "OKR"
+      - "Spec駆動（抽象↔具体の往復）"
+    question_style:
+      prefer: ["思考に初速を与える問い", "前提の点検", "構造化", "因果の検査"]
+      avoid: ["結論だけ", "正解の押し付け"]
+    collaboration_style:
+      default_mode: "first_draft_then_critique"  # まず叩き台→批判→修正
+      review_focus: ["契約", "シーケンス", "失敗モード", "テスト戦略"]
+
+  communication_prefs:
+    language: "ja"
+    tone: "conversational_concise"
+    formatting:
+      prefer: ["箇条書き", "テンプレ", "チェックリスト", "コピペ可", "選択肢は記号で"]
+      avoid: ["長い前置き", "過剰なポエム"]
+    interaction_contract:
+      assistant_can_decide_broadly: true
+      assistant_should_point_out_and_fix: true
+      clarify_only_if_blocked: true
+
+  privacy_and_boundaries:
+    store_allowed:
+      - "価値観/判断軸"
+      - "思考の型/好み"
+      - "役割やプロジェクトの公開可能な文脈"
+    store_avoid:
+      - "機密情報（社内未公開）"
+      - "個人のセンシティブ詳細（健康/家族など）は最小限"
+    redaction_rules:
+      - "外部共有物は固有名詞・数値・社内情報をマスク"
+      - "曖昧なら保存しない"
+
+mutable:
+  # ⏳ 変わりやすい情報（期限付き）
+  current_roles:
+    - "Scrum Master（プロダクト開発の推進・改善）"
+    - "Agile Coach（チーム/組織のアジャイル変革支援）"
+    - "OKR Facilitator（OKR設計・運用会議の設計/進行）"
+    - "Engineering Manager（役割拡張予定）"
+    - "組織開発/採用設計（評価の標準化・仕組み化）"
+
+  current_projects:
+    - name: "AIネイティブ開発の標準化"
+      objective: "AI前提で合意→実装→検査を高速に回す型を作る"
+      constraints:
+        - "検査可能性を落とさない"
+        - "ウォーターフォール化しない"
+        - "機密配慮"
+      current_state: "原則・テンプレ・プロンプトの整備中"
+      next_actions:
+        - "運用チートシート作成"
+        - "レビュー観点の固定化"
+        - "実験→学習ログ化"
+      review_at: "2026-02-22"
+
+    - name: "OKR運用の会議設計"
+      objective: "OKRが尻切れにならず実行計画まで落ちる仕組み"
+      constraints:
+        - "因果仮説と検証観点を明示"
+        - "リソース制約を織り込む"
+      current_state: "会議設計を段階化して詰めている"
+      next_actions:
+        - "テンプレ化"
+        - "参加者の責務分担"
+        - "指標品質レビュー導線"
+      review_at: "2026-02-22"
+
+    - name: "登壇準備（AIネイティブな組織要件）"
+      objective: "要点が伝わるプロフィール/説明の整備"
+      constraints:
+        - "具体過ぎる社内情報は避ける"
+        - "価値を抽象で語る"
+      current_state: "文章を磨いている"
+      next_actions:
+        - "短い定型文（30秒/2分）作成"
+        - "Q&A想定"
+      review_at: "2026-02-22"
+
+    - name: "公開知としての文章化（Future Self OS）"
+      objective: "思考の前提・構造を継続更新し公開できる形にする"
+      constraints:
+        - "自己否定ループにしない"
+        - "批判的思考を健全に保つ"
+      current_state: "記事/仕組みの設計中"
+      next_actions:
+        - "テンプレ固定"
+        - "入出力ループ設計"
+        - "公開前の秘匿フィルタ"
+      review_at: "2026-02-22"
+
+  current_focus_topics:
+    - "Spec駆動/Agent活用"
+    - "OKR実行計画"
+    - "登壇準備"
+
+  constraints_now:
+    time: "複数テーマ並行。最小入力→叩き台→修正が望ましい"
+    budget: ""
+    energy: "高密度の議論は歓迎。冗長な前置きは不要"
+
+  review_at: "2026-02-22"
+
+learning_log:
+  # 📚 "当たった指摘"を溜めると精度が上がる
+  corrections_that_worked: []
+  common_pitfalls:
+    - "実行プランへのブリッジが弱くなることがある"
+  calibration_notes: []
+
+agent_runtime_policy:
+  # 🤖 エージェントのデフォルト挙動（ここが"勝手に判断する"の定義）
+  default_actions:
+    - "叩き台を先に出す"
+    - "問題点を指摘し、修正案まで出す"
+    - "修正後に検査観点（チェックリスト）を添える"
+  risk_handling:
+    high_stakes_domains: ["medical", "legal", "financial"]
+    rules:
+      - "断定を避け、根拠と代替案を提示"
+      - "最新性が重要ならWeb参照を促す/行う（ユーザー許可がある前提）"
+  memory_hygiene:
+    record_fields:
+      - "source"        # user_said | inferred | doc
+      - "date"
+      - "confidence"    # 0.0-1.0
+      - "review_at"
+    decay_policy:
+      mutable_days: 30
+      stable_review_days: 180
