@@ -1,5 +1,33 @@
 # カスタム関数
 
+# GitHub アカウント自動切り替え (ディレクトリベース)
+function _auto_switch_gh_account() {
+    local current_dir="$PWD"
+    local target_account=""
+    
+    # kocchi のリポジトリ
+    if [[ "$current_dir" == *"/ghq/github.com/kocchi/"* ]] || \
+       [[ "$current_dir" == "$HOME/.local/share/chezmoi"* ]]; then
+        target_account="kocchi"
+    # 仕事用 (デフォルト)
+    elif [[ "$current_dir" == *"/ghq/github.com/"* ]]; then
+        target_account="yuki-hirako_dena"
+    fi
+    
+    # 切り替えが必要な場合のみ実行
+    if [[ -n "$target_account" ]]; then
+        local current_account=$(gh auth status 2>&1 | grep "Active account: true" -B2 | head -1 | awk '{print $NF}' 2>/dev/null)
+        if [[ "$current_account" != "$target_account" ]]; then
+            gh auth switch -u "$target_account" 2>/dev/null && \
+                echo "🔄 gh: switched to $target_account"
+        fi
+    fi
+}
+
+# ディレクトリ変更時に自動実行
+autoload -Uz add-zsh-hook
+add-zsh-hook chpwd _auto_switch_gh_account
+
 # ghqとfzfを使ったリポジトリ移動（zleが利用可能な場合のみ）
 if command -v ghq >/dev/null 2>&1 && command -v fzf >/dev/null 2>&1 && zmodload -e zsh/zle 2>/dev/null; then
     function ghq-fzf() {
@@ -48,3 +76,8 @@ function mcpw() {
 
     exec "${cmd[@]}" "$@"
 }
+
+# Claude Code プラグインを Cursor と同期（シェル起動時に自動実行）
+if [[ -x "$HOME/.local/bin/sync-claude-plugins.sh" ]]; then
+    "$HOME/.local/bin/sync-claude-plugins.sh" &>/dev/null &
+fi

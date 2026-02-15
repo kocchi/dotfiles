@@ -79,6 +79,14 @@ if [ -d "$PLUGIN_DIR/templates" ]; then
     done
 fi
 
+# Sync Claude Code plugins to ~/.agent/skills/
+SYNC_SCRIPT="$HOME/.local/bin/sync-claude-plugins.sh"
+if [ -x "$SYNC_SCRIPT" ]; then
+    echo ""
+    echo "🔄 Syncing Claude Code plugins..."
+    "$SYNC_SCRIPT"
+fi
+
 echo ""
 echo "✅ user-model-framework setup complete!"
 echo "   Plugin: $PLUGIN_DIR"
