@@ -34,7 +34,8 @@ stable:
         meaning: "人ではなくシステムとして捉える"
         priority: "must"
     quality_bar:
-      pass_conditions: []        # これを満たせばOK
+      pass_conditions:
+        - "コミットは論理的な単位で分割されている"
       common_failures:           # よくある減点
         - "雑な要約"
         - "安易な励まし"

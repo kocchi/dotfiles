@@ -3,6 +3,11 @@
 All notable changes to `user_model.yaml` are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/).
 
+## [1.2.0] - 2026-01-23
+
+### Added
+- `stable.decision_engine.quality_bar.pass_conditions` - コミット粒度の品質基準
+
 ## [1.1.0] - 2026-01-23
 
 ### Added
