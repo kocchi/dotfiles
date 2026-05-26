@@ -42,6 +42,27 @@ if command -v ghq >/dev/null 2>&1 && command -v fzf >/dev/null 2>&1 && zmodload 
     bindkey '^]' ghq-fzf
 fi
 
+# Claude Code / Codex: ghq+fzf でプロジェクトへ移動し前回セッションを再開
+# （Ghostty が分割レイアウトと cwd を復元 → ここで会話を再開、で作業復旧率を最大化）
+if command -v ghq >/dev/null 2>&1 && command -v fzf >/dev/null 2>&1; then
+    # ccr    : ディレクトリ選択 → 最新の Claude 会話を継続 (claude --continue)
+    # ccr r  : ディレクトリ選択 → 会話ピッカー (claude --resume)
+    function ccr() {
+        local dir
+        dir=$(ghq list -p | fzf --prompt="claude resume> ") || return
+        cd "$dir" || return
+        if [[ "${1-}" == "r" ]]; then claude --resume; else claude --continue; fi
+    }
+    # cxr    : ディレクトリ選択 → 最新の Codex セッションを継続 (codex resume --last)
+    # cxr r  : ディレクトリ選択 → セッションピッカー (codex resume)
+    function cxr() {
+        local dir
+        dir=$(ghq list -p | fzf --prompt="codex resume> ") || return
+        cd "$dir" || return
+        if [[ "${1-}" == "r" ]]; then codex resume; else codex resume --last; fi
+    }
+fi
+
 # プロセス終了用の関数
 function fkill() {
     local pid
