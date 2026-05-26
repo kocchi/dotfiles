@@ -1,0 +1,149 @@
+# Claude Code Web Access Allowlist
+# 1行1ドメイン。サブドメインも自動的に許可される
+# 例: github.com → api.github.com, raw.githubusercontent.com は別途追加が必要
+#
+# NOTE: 環境固有ドメイン（社内 GHE・業務システム等）は本ファイルに含めず、
+#       各環境の ~/.claude/scripts/web-allow-domains.txt に直接追記する運用。
+
+# ── GitHub ──
+github.com
+raw.githubusercontent.com
+githubusercontent.com
+github.io
+
+# ── Atlassian / Jira / Confluence ──
+atlassian.net
+atlassian.com
+bitbucket.org
+
+# ── Google 系 ──
+google.com
+googleapis.com
+cloud.google.com
+docs.google.com
+drive.google.com
+fonts.googleapis.com
+
+# ── Anthropic / Claude ──
+anthropic.com
+docs.anthropic.com
+claude.ai
+platform.claude.com
+code.claude.com
+support.claude.com
+support.anthropic.com
+
+# ── コラボレーション ──
+figma.com
+slack.com
+api.slack.com
+notion.so
+
+# ── Go ──
+go.dev
+pkg.go.dev
+golang.org
+
+# ── JavaScript / TypeScript / Node.js ──
+nodejs.org
+npmjs.com
+nextjs.org
+react.dev
+typescriptlang.org
+tc39.es
+vitejs.dev
+eslint.org
+prettier.io
+tailwindcss.com
+shadcn.com
+ui.shadcn.com
+
+# ── Ruby / Rails ──
+ruby-lang.org
+ruby-doc.org
+api.rubyonrails.org
+rubyonrails.org
+rubygems.org
+bundler.io
+
+# ── Web 標準 / リファレンス ──
+developer.mozilla.org
+w3.org
+httpstatuses.com
+json-schema.org
+openapis.org
+graphql.org
+semver.org
+
+# ── ワークフロー / 自動化 ──
+n8n.io
+docs.n8n.io
+community.n8n.io
+n8n.cloud
+
+# ── AI / MCP ──
+modelcontextprotocol.io
+docs.slack.dev
+glama.ai
+smithery.ai
+devin.ai
+app.devin.ai
+docs.devin.ai
+cursor.com
+docs.cursor.com
+
+# ── インフラ / DevOps ──
+docs.docker.com
+hub.docker.com
+kubernetes.io
+helm.sh
+nginx.org
+postgresql.org
+mysql.com
+redis.io
+
+# ── クラウド ──
+aws.amazon.com
+learn.microsoft.com
+registry.terraform.io
+
+# ── セキュリティ ──
+owasp.org
+cve.org
+nvd.nist.gov
+
+# ── CI/CD ──
+circleci.com
+
+# ── 技術メディア / Q&A ──
+stackoverflow.com
+stackexchange.com
+zenn.dev
+qiita.com
+dev.to
+
+# ── 会計 / 確定申告 ──
+freee.co.jp
+americanexpress.com
+
+# ── 日本政府 / 制度（制度変更監視）──
+go.jp
+e-gov.go.jp
+
+# ── Playwright ──
+playwright.dev
+
+# ── その他の信頼できる技術ドキュメント ──
+swagger.io
+grpc.io
+protobuf.dev
+sentry.io
+datadog.com
+grafana.com
+
+# ── 採用管理（Sonar ATS）──
+snar.jp
+
+# ── その他 ──
+rakuten.co.jp
+localhost

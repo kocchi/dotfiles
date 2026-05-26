@@ -5,6 +5,12 @@
 - Be concise and direct
 - Use code examples when helpful
 
+## Git
+- `Co-Authored-By` トレーラーを付けない
+
+## gcloud CLI
+- **参照以外の操作は絶対禁止**（list, describe, get のみ。create, delete, update, deploy 等は実行しない）
+
 ## Coding Preferences
 - Prefer modern syntax and best practices
 - Add comments for complex logic
@@ -28,31 +34,10 @@ ghq 依存の処理は `run_once_after_*` で実行すること。
 ### 関連リポジトリ
 - OSS Plugin: `github.com/kocchi/user-model-framework`
 
-### API Key Setup (manual)
-新しい環境では `~/.zshrc.local` に追加:
-
-**個人 PC (Anthropic API):**
-```bash
-export ANTHROPIC_API_KEY="sk-ant-..."
-```
-
-**職場 PC (Bedrock):**
-```bash
-export CLAUDE_CODE_USE_BEDROCK=1
-export AWS_REGION=ap-northeast-1
-export AWS_BEARER_TOKEN_BEDROCK="your-key"
-export CLAUDE_CODE_MAX_OUTPUT_TOKENS=4096
-export MAX_THINKING_TOKENS=1024
-export ANTHROPIC_DEFAULT_HAIKU_MODEL=global.anthropic.claude-haiku-4-5-20251001-v1:0
-export ANTHROPIC_DEFAULT_SONNET_MODEL=global.anthropic.claude-sonnet-4-5-20250929-v1:0
-export ANTHROPIC_DEFAULT_OPUS_MODEL=global.anthropic.claude-opus-4-5-20251101-v1:0
-```
+### Authentication
+OAuth 認証を使用（`claude login` で設定済み）。`apiKeyHelper` は不要。
 
 ### Required Plugins (manual install)
 ```
 /plugin install skill-creator
 ```
-
-### Claude Plugins → Cursor 自動同期
-シェル起動時に自動で `sync-claude-plugins.sh` が実行される。
-手動実行も可: `sync-claude-plugins.sh`

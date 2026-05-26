@@ -1,5 +1,96 @@
 {
+  "env": {
+    "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1"
+  },
+  "permissions": {
+    "deny": [
+      "Bash(git push --force *)",
+      "Bash(git push -f *)",
+      "Bash(git push origin main*)",
+      "Bash(git push origin master*)",
+      "Bash(chmod 777 *)",
+      "Bash(rm -rf /*)",
+      "Bash(rm -rf ~*)",
+      "Bash(gh repo delete*)"
+    ],
+    "defaultMode": "auto",
+    "hook_confirm": [
+      "Bash(git reset --hard *)",
+      "Bash(git clean -f*)",
+      "Bash(git checkout . *)",
+      "Bash(brew install *)",
+      "Bash(npm install -g *)",
+      "Bash(gh pr merge*)"
+    ]
+  },
+  "model": "opus[1m]",
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/.claude/scripts/deny-check.sh"
+          }
+        ]
+      },
+      {
+        "matcher": "WebFetch",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/.claude/scripts/web-allow-check.sh"
+          }
+        ]
+      },
+      {
+        "matcher": "mcp__playwright__browser_navigate",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/.claude/scripts/web-allow-check.sh"
+          }
+        ]
+      }
+    ],
+    "PermissionRequest": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo \"$(date) PermissionRequest\" >> /tmp/claude-hook.log; /opt/homebrew/bin/terminal-notifier -title 'Claude Code' -message '承認が必要です' -sound Glass >/dev/null 2>&1 || true"
+          }
+        ]
+      }
+    ],
+    "Notification": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo \"$(date) Notification\" >> /tmp/claude-hook.log; /opt/homebrew/bin/terminal-notifier -title 'Claude Code' -message '入力待ちです' -sound Glass >/dev/null 2>&1 || true"
+          }
+        ]
+      }
+    ]
+  },
+  "statusLine": {
+    "type": "command",
+    "command": "bash ~/.claude/statusline-command.sh"
+  },
   "enabledPlugins": {
-    "skill-creator@claude-plugins-official": true
-  }
+    "skill-creator@claude-plugins-official": true,
+    "common-skills@common-skills": true,
+    "frontend-design@claude-plugins-official": true,
+    "context7@claude-plugins-official": true,
+    "slack@claude-plugins-official": true,
+    "chrome-devtools-mcp@claude-plugins-official": true
+  },
+  "skipDangerousModePermissionPrompt": true,
+  "theme": "dark-daltonized",
+  "agentPushNotifEnabled": true,
+  "skipAutoPermissionPrompt": true,
+  "voiceEnabled": true
 }
