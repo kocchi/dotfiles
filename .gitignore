@@ -1,2 +1,4 @@
 dot.vim/bundle/*
 dot.vim/userautoload/custom.vim
+__pycache__/
+*.pyc

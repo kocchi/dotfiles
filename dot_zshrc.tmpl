@@ -240,28 +240,14 @@ if [[ $- == *i* ]]; then
     [[ -f "$ZSH_CONFIG_DIR/functions.zsh" ]] && source "$ZSH_CONFIG_DIR/functions.zsh"
 fi
 
-# tmux自動起動（セッション管理改良）- VSCode/Cursor環境では完全にスキップ
-if [[ -z "$VSCODE_SHELL" ]] && command -v tmux >/dev/null 2>&1 && [ -z "$TMUX" ] && [ "$TERM_PROGRAM" != "vscode" ] && [[ $- == *i* ]] && [[ "$TERM" != "dumb" ]]; then
-    # tmuxのセッション一覧を取得
-    sessions=$(tmux list-sessions 2>/dev/null)
-    
-    if [ $? -eq 0 ]; then
-        # 既存のセッションがある場合は選択
-        if command -v fzf >/dev/null 2>&1; then
-            session=$(echo "$sessions" | fzf --select-1 --exit-0 | cut -d: -f1)
-            if [ -n "$session" ]; then
-                tmux attach-session -t "$session"
-            else
-                tmux new-session
-            fi
-        else
-            tmux attach-session
-        fi
-    else
-        # セッションが無い場合は新規作成
-        tmux new-session
-    fi
-fi
+# tmux 自動起動は無効化（Ghostty をメイン運用するため）
+# - 分割レイアウト/ディレクトリの復元 → Ghostty の window-save-state=always が担当
+# - 前回セッションの再開 → claude -c / codex resume --last（または ccr / cxr 関数）
+# - tmux が必要な時（SSH・常駐ジョブ）は `t` で手動起動できる
+# 旧来の自動起動に戻したい場合は ~/.zshrc.local に以下を記述:
+#   if [[ -z "$VSCODE_SHELL" ]] && command -v tmux >/dev/null 2>&1 && [ -z "$TMUX" ] && [[ $- == *i* ]] && [[ "$TERM" != "dumb" ]]; then
+#       tmux attach-session 2>/dev/null || tmux new-session
+#   fi
 
 # iTerm2 Shell Integration（存在する場合のみ）- VSCode/Cursor環境ではスキップ
 if [[ -z "$VSCODE_SHELL" ]]; then

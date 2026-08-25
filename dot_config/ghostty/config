@@ -1,0 +1,15 @@
+# Ghostty 設定
+
+# 作業復旧の要: 終了/再起動/クラッシュ後も
+#   ウィンドウ・タブ・分割レイアウトと各ペインのディレクトリを復元する。
+#   （プロセス自体は復元されない。会話は claude -c / codex resume --last、
+#    もしくは ccr / cxr 関数で再開する想定）
+window-save-state = always
+
+# 新規ウィンドウ/タブ/分割は現在のディレクトリを引き継ぐ（既定でも true）
+window-inherit-working-directory = true
+tab-inherit-working-directory = true
+split-inherit-working-directory = true
+
+# アイコン（starship / eza 等）を出したい場合は Nerd Font を有効化（導入済み）:
+# font-family = "JetBrainsMono Nerd Font"
