@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$comment": "Public stdout envelope. analysis conforms to review-output.schema.json; estimate is adapter-owned metadata.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["analysis", "estimate"],
+  "properties": {
+    "analysis": {
+      "oneOf": [
+        {"type": "null"},
+        {"$ref": "review-output.schema.json"}
+      ]
+    },
+    "estimate": {"type": "object"}
+  }
+}

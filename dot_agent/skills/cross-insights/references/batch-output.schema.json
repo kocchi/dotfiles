@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$comment": "Internal schema for one batch-analysis model response.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["observations"],
+  "properties": {
+    "observations": {
+      "type": "array",
+      "maxItems": 10,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["category", "cause_level", "evidence_count", "impact", "operation", "target", "problem", "proposal", "confidence", "session_refs"],
+        "properties": {
+          "category": {"enum": ["preflight", "estimate", "bottleneck", "instruction_retention", "approach_mismatch", "quality", "resumability", "efficiency", "other"]},
+          "cause_level": {"enum": ["execution", "workflow", "rule", "tool"]},
+          "evidence_count": {"type": "integer", "minimum": 1},
+          "impact": {"type": "integer", "minimum": 1, "maximum": 5},
+          "operation": {"enum": ["add", "subtract", "merge", "split", "none"]},
+          "target": {"enum": ["global_rule", "repo_rule", "skill", "hook", "tool", "none"]},
+          "problem": {"type": "string", "maxLength": 300},
+          "proposal": {"type": "string", "maxLength": 300},
+          "confidence": {"type": "number", "minimum": 0, "maximum": 1},
+          "session_refs": {"type": "array", "minItems": 1, "maxItems": 10, "items": {"type": "string", "maxLength": 80}}
+        }
+      }
+    }
+  }
+}
